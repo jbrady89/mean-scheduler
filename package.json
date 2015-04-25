@@ -1,0 +1,12 @@
+{
+  "name": "starter-node-angular",
+  "version": "0.0.0",
+  "description": "mean-stack-tutorial",
+  "main": "server.js",
+  "dependencies": {
+  	"express": "~4.x.x",
+  	"mongoose": "~3.8.x",
+  	"body-parser": "~1.x.x",
+  	"method-override": "~2.x.x"
+  }
+}

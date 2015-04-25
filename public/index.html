@@ -1,0 +1,47 @@
+<html lang="en" ng-app="sampleApp">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Starter Node and Angular</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css"> <!-- custom styles -->
+
+    <!-- JS -->
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="//angular-ui.github.io/ui-router/release/angular-ui-router.js"></script>
+
+    <!-- ANGULAR CUSTOM -->
+    <script src="js/controllers/MainCtrl.js"></script>
+    <script src="js/controllers/TrainersCtrl.js"></script>
+    <script src="js/services/CalendarService.js"></script>
+    <script src="js/controllers/CalendarsCtrl.js"></script>
+    <script src="js/appRoutes.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <nav class="navbar navbar-inverse">
+        <div class="navbar-header">
+            <a class="navbar-brand" ui-sref="home">MEANfit</a>
+        </div>
+
+        <!-- LINK TO OUR PAGES. ANGULAR HANDLES THE ROUTING HERE -->
+        <ul class="nav navbar-nav">
+          <!--<li><a ui-sref="/about">About</a></li>-->
+            <li><a ui-sref="trainers">Trainers</a></li>
+        </ul>
+    </nav>
+  
+
+  <div class="row">
+    <div class="span12">
+      <div class="well" ui-view></div>        
+    </div>
+   </div>
+</div>
+</body>
+</html>
