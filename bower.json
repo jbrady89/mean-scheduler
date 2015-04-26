@@ -1,7 +1,8 @@
 {
-    "name": "starter-node-angular",
+    "name": "mean-scheduler",
     "version": "1.0.0",
     "dependencies": {
+
         "angular": "1.2.26",
         "jquery": "2.x",
         "fullcalendar": "2.1.1",
@@ -11,12 +12,13 @@
         "angular-ui-router": "latest",
         "angular-bootstrap": "latest",
         "bootstrap": "latest"
-
     },
+
     "devDependencies": {
         "angular-mocks": "~1.x",
         "bootstrap-css": "2.3.1"
     },
+    
     "resolutions": {
         "jquery": "~2.x",
         "angular": "1.2.26"
