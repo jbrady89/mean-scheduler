@@ -25,8 +25,8 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	        })
 
 	        .state('trainers.about.calendar', {
-	        	parent: "trainers.about",
-	        	url: "calendar",
+	        	parent: "trainers",
+	        	url: "/:id/calendar",
 	        	templateUrl: "views/trainers.calendar.html",
 	           	controller: "CalendarsCtrl"
 	        })
