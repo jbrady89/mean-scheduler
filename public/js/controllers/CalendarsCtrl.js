@@ -3,7 +3,8 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     /**
  * calendarDemoApp - 0.9.0
  */
-
+    $scope.trainerId = $stateParams.id;
+    var trainerId = $scope.trainerId;
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();

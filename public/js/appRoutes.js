@@ -17,11 +17,19 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	            controller: "TrainersCtrl"
 	        })
 	        
-	        .state('trainers.calendar', {
-	           url: "/:id/calendar",
-	           templateUrl: "views/trainers.calendar.html",
-	           controller: "CalendarsCtrl"
-	        });
+	        .state('trainers.about', {
+	           parent: "trainers",
+	           url: "/:id",
+	           templateUrl: "views/trainers.about.html",
+	           controller: "TrainersCtrl"
+	        })
+
+	        .state('trainers.about.calendar', {
+	        	parent: "trainers.about",
+	        	url: "calendar",
+	        	templateUrl: "views/trainers.calendar.html",
+	           	controller: "CalendarsCtrl"
+	        })
 
 
 	});
