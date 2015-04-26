@@ -6,6 +6,8 @@
         "font-awesome": "latest",
         "animate.css": "latest",
         "angular": "latest",
-        "angular-ui-router": "latest"   
+        "angular-ui-router": "latest",
+        "angular-ui-calendar": "latest",
+        "angular-bootstrap": "latest" 
     }
 }

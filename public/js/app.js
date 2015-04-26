@@ -1,2 +1,2 @@
 // public/js/app.js
-angular.module('sampleApp', ['ui.router', 'appRoutes', 'MainCtrl', 'TrainersCtrl', 'CalendarsCtrl', 'CalendarService']);
+angular.module('sampleApp', ['ui.calendar', 'ui.router', 'ui.bootstrap', 'appRoutes', 'CalendarService', 'MainCtrl', 'TrainersCtrl', 'CalendarsCtrl']);
