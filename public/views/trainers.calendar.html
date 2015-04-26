@@ -1,15 +1,11 @@
-<div role="main">
-    <div class="container">
-        <section id="directives-calendar" ng-controller="CalendarsCtrl">
-            <div class="page-header">
-                <h1>{{message}}</h1>
-            </div>
-            <div class="well">
+<div class="well">
                 <div class="row-fluid">
                     <div class="span4">
                         
                         <div class="btn-group calTools">
-                                     
+                          <button class="btn" ng-click="changeLang()">
+                            {{changeTo}}
+                          </button>              
                           <button class="btn" ng-click="addRemoveEventSource(eventSources,eventSource)">
                             Toggle Source
                           </button>
@@ -87,6 +83,4 @@
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
-</div>
+        </div>
