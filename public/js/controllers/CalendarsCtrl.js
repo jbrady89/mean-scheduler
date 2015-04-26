@@ -1,12 +1,15 @@
 angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams ) {
 
-    var calendarId = $stateParams.id;
-    $scope.message = "Welcome to trainer" + calendarId + "'s calendar!";
+    /**
+ * calendarDemoApp - 0.9.0
+ */
+
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
     var y = date.getFullYear();
     
+    $scope.changeTo = 'Hungarian';
     /* event source that pulls from google.com */
     $scope.eventSource = {
             className: 'gcal-event',           // an option!
@@ -124,5 +127,6 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     /* event sources array*/
     $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
     $scope.eventSources2 = [$scope.calEventsExt, $scope.eventsF, $scope.events];
+/* EOF */
 });
 /* EOF */
