@@ -21,16 +21,20 @@
                     <h4 class="modal-title" id="myModalLabel">Schedule your next session!</h4>
                   </div>
                   <div class="modal-body">
-                    <span> Day:
-                        <input type="text" ng-model="sessionDay" />
+                    <span class="row">Name:
+                        <input type="text" ng-model="clientName" />
+                    </span >
+                    <span class="row">Date:
+                        <input type="text" ng-model="sessionMonth" placeholder="MM" />/
+                        <input type="text" ng-model="sessionDay" placeholder="DD" />
                     </span>
-                    <span>Time: 
-                        <input type="text" ng-model="sessionTime" />
+                    <span class="row">Time: 
+                        <input type="text" ng-model="sessionTime" placeholder="Between 8AM and 8PM"/>
                     </span>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" ng-click="addEvent()">Save changes</button>
                   </div>
                 </div>
               </div>
