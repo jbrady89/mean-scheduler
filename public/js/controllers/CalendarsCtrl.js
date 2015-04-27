@@ -17,6 +17,19 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
             currentTimezone: 'America/Chicago' // an option!
     };
     /* event source that contains custom events on the scope */
+    var trainerInfo = {
+      id: 2
+    };
+    
+    Calendar.get(trainerInfo)
+      .then(function(res){
+        console.log(res);
+        alert("response: ", res);
+      })
+      .catch(function(err){
+        alert("error: ", err);
+      });
+
     $scope.events = [
       {title: 'All Day Event',start: new Date(y, m, 1)},
       {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
@@ -82,6 +95,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
 
       $scope.events.push(newEvent);
 
+      // create new training session and save to db
       Calendar.create(newEvent)
         .then(function(response){
           alert(response);
@@ -93,6 +107,15 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     /* remove event */
     $scope.remove = function(index) {
       $scope.events.splice(index,1);
+      var event = $scope.events[index];
+      // delete the record
+      // Calendar.delete(session)
+      //  .then(function(response){
+      //   alert(response.toString());
+      // })
+      // .catch(function(err){
+      //   alert(err.toString());
+      // })
     };
     /* Change View */
     $scope.changeView = function(view,calendar) {

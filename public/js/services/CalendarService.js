@@ -4,9 +4,9 @@ angular.module('CalendarService', []).factory('Calendar', ['$http', function($ht
     return {
         // call to get all sessions for the calendar
 
-        get : function(calendarId) {
+        get : function(trainerInfo) {
 
-            return $http.get('/api/calendar', calendarId);
+            return $http.get('/api/calendar', {params: trainerInfo });
         },
 
 

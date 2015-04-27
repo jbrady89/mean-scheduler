@@ -11,21 +11,26 @@ var Event = require('./models/calendar');
 
         // getting the training session data using trainer id
         app.get('/api/calendar', function(req, res) {
-            // use mongoose to get all nerds in the database
-            Calender.find(1, function(err, sessions) {
+            // get all the events for the current calendar
+            // we do this by requesting all records that contain the trainerId
+            // trainer 
+            console.log(req.query);
+            var id = req.query.id;
+            Event.find({trainer: id}, function(err, events) {
 
                 // if there is an error retrieving, send the error. 
                                 // nothing after res.send(err) will execute
                 if (err)
                     res.send(err);
 
-                res.json(sessions); // return all nerds in JSON format
+                console.log(events);
+                res.json(events); // return all scheduled events in JSON format
             });
         });
 
         // for saving a new training session
         app.post('/api/calendar', function(req, res){
-
+            console.log("response: ", res);
             console.log("request body: ", req.body);
             var eventData = req.body;
             var newEvent = new Event(eventData);
