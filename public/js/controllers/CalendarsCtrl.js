@@ -1,4 +1,4 @@
-angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams ) {
+angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams, Calendar ) {
 
     /**
  * calendarDemoApp - 0.9.0
@@ -70,12 +70,25 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
     /* add custom event*/
     $scope.addEvent = function() {
-      $scope.events.push({
+
+      var newEvent = {
+        trainer: trainerId,
+        message: "hello!"/*
         title: 'Open Sesame',
         start: new Date(y, m, 28),
         end: new Date(y, m, 29),
-        className: ['openSesame']
-      });
+        className: ['openSesame']*/
+      };
+
+      $scope.events.push(newEvent);
+
+      Calendar.create(newEvent)
+        .then(function(response){
+          alert(response);
+        })
+        .catch(function(err){
+          alert(err);
+        });
     };
     /* remove event */
     $scope.remove = function(index) {

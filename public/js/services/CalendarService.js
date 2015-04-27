@@ -1,5 +1,5 @@
 // public/js/services/NerdService.js
-angular.module('CalendarService', []).factory('CalendarService', ['$http', function($http) {
+angular.module('CalendarService', []).factory('Calendar', ['$http', function($http) {
 
     return {
         // call to get all sessions for the calendar
@@ -12,8 +12,8 @@ angular.module('CalendarService', []).factory('CalendarService', ['$http', funct
 
                 // these will work when more API routes are defined on the Node side of things
         // call to POST and create a new nerd
-        create : function(sessionData) {
-            return $http.post('/api/calendar', sessionData);
+        create : function(eventData) {
+            return $http.post('/api/calendar', eventData);
         },
 
         // call to DELETE a session
