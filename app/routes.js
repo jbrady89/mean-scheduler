@@ -1,7 +1,7 @@
 // app/routes.js
 
 // grab the nerd model we just created
-var Calendar = require('./models/calendar');
+var Event = require('./models/calendar');
 
     module.exports = function(app) {
 
@@ -25,13 +25,19 @@ var Calendar = require('./models/calendar');
 
         // for saving a new training session
         app.post('/api/calendar', function(req, res){
-            Calendar.save(function(err, sessionData){
+
+            console.log("request body: ", req.body);
+            var eventData = req.body;
+            var newEvent = new Event(eventData);
+
+            newEvent.save(function(err){
+
                 if (err){
                     res.send(err);
-
+                    console.log(err);
                 }
-
-                res.json("session saved!");
+                res.send("session saved!");
+                console.log("session saved!");
             });
         });
 
