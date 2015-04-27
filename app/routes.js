@@ -1,6 +1,6 @@
 // app/routes.js
 
-// grab the nerd model we just created
+// import the Event schema
 var Event = require('./models/calendar');
 
     module.exports = function(app) {
@@ -9,12 +9,10 @@ var Event = require('./models/calendar');
         // handle things like api calls
         // authentication routes
 
-        // getting the training session data using trainer id
         app.get('/api/calendar', function(req, res) {
             // get all the events for the current calendar
             // we do this by requesting all records that contain the trainerId
             // trainer 
-            console.log(req.query);
             var id = req.query.id;
             Event.find({trainer: id}, function(err, events) {
 
@@ -28,7 +26,10 @@ var Event = require('./models/calendar');
             });
         });
 
-        // for saving a new training session
+        // route to handle creating goes here (app.post)
+        // route to handle delete goes here (app.delete)
+
+        // post route for saving a new training session
         app.post('/api/calendar', function(req, res){
             console.log("response: ", res);
             console.log("request body: ", req.body);
@@ -46,10 +47,7 @@ var Event = require('./models/calendar');
             });
         });
 
-
-
-        // route to handle creating goes here (app.post)
-        // route to handle delete goes here (app.delete)
+        // delete route goes here
 
         // frontend routes =========================================================
         // route to handle all angular requests
