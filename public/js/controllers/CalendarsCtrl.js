@@ -20,8 +20,8 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     var trainerInfo = {
       id: 2
     };
-    
-    Calendar.get(trainerInfo)
+
+    $scope.events = Calendar.get(trainerInfo)
       .then(function(res){
         console.log(res);
         alert("response: ", res);
@@ -30,14 +30,6 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
         alert("error: ", err);
       });
 
-    $scope.events = [
-      {title: 'All Day Event',start: new Date(y, m, 1)},
-      {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
-      {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
-      {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
-      {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false},
-      {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
-    ];
     /* event source that calls a function on every view switch */
     $scope.eventsF = function (start, end, timezone, callback) {
       var s = new Date(start).getTime() / 1000;
@@ -81,17 +73,21 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
         sources.push(source);
       }
     };
+
+    $scope.showModal = function(){
+      console.log("show my modal");
+      $scope.displayModal = true;
+    };
     /* add custom event*/
     $scope.addEvent = function() {
-
-      var newEvent = {
-        trainer: trainerId,
-        message: "hello!"/*
-        title: 'Open Sesame',
-        start: new Date(y, m, 28),
-        end: new Date(y, m, 29),
-        className: ['openSesame']*/
-      };
+      var clientName = "Jon",
+          newEvent = {
+            trainer: trainerId,
+            clientName: clientName,
+            startTime: new Date(2015, 03, 28, 12, 30),
+            endTime: new Date(2015, 03, 28, 13, 30),
+            title: $scope.title
+          };
 
       $scope.events.push(newEvent);
 
@@ -99,6 +95,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       Calendar.create(newEvent)
         .then(function(response){
           alert(response);
+          $scope.displayModal = false;
         })
         .catch(function(err){
           alert(err);
@@ -109,13 +106,13 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       $scope.events.splice(index,1);
       var event = $scope.events[index];
       // delete the record
-      // Calendar.delete(session)
-      //  .then(function(response){
-      //   alert(response.toString());
-      // })
-      // .catch(function(err){
-      //   alert(err.toString());
-      // })
+      Calendar.delete(event)
+        .then(function(response){
+          alert(response.toString());
+        })
+        .catch(function(err){
+          alert(err.toString());
+        });
     };
     /* Change View */
     $scope.changeView = function(view,calendar) {
