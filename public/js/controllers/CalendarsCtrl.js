@@ -95,12 +95,18 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       $scope.mytime.setMonth($scope.sessionMonth - 1);
       $scope.mytime.setDate($scope.sessionDay);
       $scope.mytime.setYear(2015);
+      var start = $scope.mytime;
+      console.log(start);
+      var endHour = $scope.mytime.getHours() + 1;
+      console.log(endHour);
+      var end = new Date(start).setHours(endHour);
+      console.log(end);
       var clientName = "Jon",
           newEvent = {
             trainer: trainerId,
             clientName: clientName,
-            startTime: $scope.mytime,
-            endTime: $scope.mytime.setHours($scope.mytime.getHours() + 1),
+            startTime: start,
+            endTime: new Date(end),
             title: $scope.title
           };
 
