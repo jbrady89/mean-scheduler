@@ -46,8 +46,10 @@
                 <li ng-repeat="e in events">
                     <div class="alert alert-info">
                         <a class="close" ng-click="remove($index)">Close</a>
-                        <b> <input ng-model="e.title"></b> 
-                        {{e.start | date:"MMM dd"}} - {{e.end | date:"MMM dd"}}
+                        <b> <input ng-model="e.t"></b> 
+                        <div class="row">
+                            <span>{{e.startTime}} - {{e.endTime}}</span>
+                        </div>
                     </div>
                 </li>
             </ul>

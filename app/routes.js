@@ -21,8 +21,14 @@ var Event = require('./models/calendar');
                 if (err)
                     res.send(err);
 
-                console.log(events);
-                res.json(events); // return all scheduled events in JSON format
+                var newArr = events.map(function(event){
+                    var eventObj = event.toObject();
+                    delete eventObj["_id"];
+                    return eventObj;
+                });
+
+                //console.log(events);
+                res.json(newArr); // return all scheduled events in JSON format
             });
         });
 

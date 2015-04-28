@@ -27,17 +27,35 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
     /* event source that contains custom events on the scope */
     var trainerInfo = {
-      id: 2
+      id: trainerId
     };
 
-    $scope.events = Calendar.get(trainerInfo)
+    Calendar.get(trainerInfo)
       .then(function(res){
-        console.log(res);
-        //alert("response: ", res);
+
+        $scope.events = res.data;
+        $scope.events = $scope.events.filter(function(event){
+          console.log(event);
+          if (event.trainer == trainerId){
+            return event;
+          }
+        });
+        $scope.startTime = new Date($scope.events.startTime).getTime() / 1000;
+        
       })
       .catch(function(err){
        // alert("error: ", err);
       });
+
+    /*$scope.events = [
+     {title: 'All Day Event',start: new Date(y, m, 1)},
+     { _id: "553f022767746368248ee9a1", trainer: 2, 
+      clientName: 'Jon', startTime: "Thu Apr 23 2015 11:30:08 GMT-0400 (Eastern Daylight Time)", 
+      endTime: "Thu Apr 23 2015 12:30:08 GMT-0400 (Eastern Daylight Time)",
+      __v: 0,
+      title: "this is my title"
+      }
+    ];*/
 
     /* event source that calls a function on every view switch */
     $scope.eventsF = function (start, end, timezone, callback) {
@@ -96,11 +114,11 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       $scope.mytime.setDate($scope.sessionDay);
       $scope.mytime.setYear(2015);
       var start = $scope.mytime;
-      console.log(start);
       var endHour = $scope.mytime.getHours() + 1;
-      console.log(endHour);
+      // 
       var end = new Date(start).setHours(endHour);
       console.log(end);
+
       var clientName = "Jon",
           newEvent = {
             trainer: trainerId,
@@ -110,22 +128,17 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
             title: $scope.title
           };
 
-      if ($scope.events.length){
-
+      
+        console.log($scope.events.length);
         $scope.events.push(newEvent);
-
-      } else {
-
-        var events = [].push(newEvent);
-        $scope.events = events;
-
-      }
+        console.log($scope.events.length);
 
       // create new training session and save to db
       Calendar.create(newEvent)
         .then(function(response){
           alert(response);
           $scope.displayModal = false;
+          
         })
         .catch(function(err){
           alert(err);
