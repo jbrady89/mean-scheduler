@@ -14,20 +14,21 @@ var Event = require('./models/calendar');
             // we do this by requesting all records that contain the trainerId
             // trainer 
             var id = req.query.id;
+            console.log("returning results for trainer: ", id);
+
             Event.find({trainer: id}, function(err, events) {
 
-                // if there is an error retrieving, send the error. 
-                                // nothing after res.send(err) will execute
+                //
                 if (err)
-                    res.send(err);
+                res.send(err);
 
                 var newArr = events.map(function(event){
                     var eventObj = event.toObject();
-                    delete eventObj["_id"];
+                    //delete eventObj["_id"];
                     return eventObj;
                 });
 
-                //console.log(events);
+                console.log(newArr);
                 res.json(newArr); // return all scheduled events in JSON format
             });
         });
@@ -42,14 +43,14 @@ var Event = require('./models/calendar');
             var eventData = req.body;
             var newEvent = new Event(eventData);
 
-            newEvent.save(function(err){
+            newEvent.save(function(err, data){
 
                 if (err){
                     res.send(err);
                     console.log(err);
                 }
-                res.send("session saved!");
-                console.log("session saved!");
+                res.send(data);
+                console.log(data);
             });
         });
 
@@ -59,6 +60,20 @@ var Event = require('./models/calendar');
         // route to handle all angular requests
         app.get('/', function(req, res) {
             res.sendFile("index.html", { root: "./public"}); // load our public/index.html file
+        });
+
+        app.delete('/api/calendar/:_id', function(req, res){
+
+            console.log(req.params);
+            Event.find( { _id: req.params._id } ).remove(function(err, data){
+                if (err){
+                    console.log(err);
+                    res.send(err);
+                }
+                res.json(data);
+
+            });
+
         });
 
     };
