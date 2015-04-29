@@ -17,8 +17,8 @@ angular.module('CalendarService', []).factory('Calendar', ['$http', function($ht
         },
 
         // call to DELETE a session
-        delete : function(eventId) {
-            return $http.delete('/api/calendar/', eventId);
+        delete : function(id) {
+            return $http.delete('/api/calendar/' + id);
         }
     };
 

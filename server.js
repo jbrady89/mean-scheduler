@@ -3,6 +3,7 @@
 // modules =================================================
 var express        = require('express');
 var app            = express();
+var morgan 		   = require('morgan');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
 var mongoose 	   = require('mongoose');
@@ -20,6 +21,8 @@ mongoose.connect(db.url);
 
 // get all data/stuff of the body (POST) parameters
 // parse application/json 
+//app.use(morgan());
+
 app.use(bodyParser.json()); 
 
 // parse application/vnd.api+json as json

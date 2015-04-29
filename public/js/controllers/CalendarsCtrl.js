@@ -34,13 +34,13 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       .then(function(res){
 
         $scope.events = res.data;
-        $scope.events = $scope.events.filter(function(event){
+        /*$scope.events = $scope.events.filter(function(event){
           console.log(event);
           if (event.trainer == trainerId){
             return event;
           }
-        });
-        $scope.startTime = new Date($scope.events.startTime).getTime() / 1000;
+        });*/
+        //$scope.startTime = new Date($scope.events.startTime).getTime() / 1000;
         
       })
       .catch(function(err){
@@ -130,7 +130,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
 
       
         console.log($scope.events.length);
-        $scope.events.push(newEvent);
+        //$scope.events.push(newEvent);
         console.log($scope.events.length);
 
       // create new training session and save to db
@@ -138,7 +138,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
         .then(function(response){
           alert(response);
           $scope.displayModal = false;
-          
+          $scope.events.push(response);
         })
         .catch(function(err){
           alert(err);
@@ -146,12 +146,16 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
     /* remove event */
     $scope.remove = function(index) {
-      $scope.events.splice(index,1);
-      var event = $scope.events[index];
+      var eventToDelete = $scope.events[index];
+      var id = eventToDelete["_id"];
       // delete the record
-      Calendar.delete(event)
+      Calendar.delete(id)
         .then(function(response){
           alert(response.toString());
+          // remove event from events array
+          alert(index);
+          $scope.events.splice(index,1);
+
         })
         .catch(function(err){
           alert(err.toString());
