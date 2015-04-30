@@ -1,4 +1,4 @@
-angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams, Calendar ) {
+angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams, Calendar, eventsData ) {
 
     /**
  * calendarDemoApp - 0.9.0
@@ -30,7 +30,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       id: trainerId
     };
 
-    Calendar.get(trainerInfo)
+    /*Calendar.get(trainerInfo)
       .then(function(res){
 
         $scope.events = res.data;
@@ -39,23 +39,16 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
           if (event.trainer == trainerId){
             return event;
           }
-        });*/
+        });
         //$scope.startTime = new Date($scope.events.startTime).getTime() / 1000;
         
       })
       .catch(function(err){
        // alert("error: ", err);
-      });
+      });*/
+  console.log(eventsData);
 
-    /*$scope.events = [
-     {title: 'All Day Event',start: new Date(y, m, 1)},
-     { _id: "553f022767746368248ee9a1", trainer: 2, 
-      clientName: 'Jon', startTime: "Thu Apr 23 2015 11:30:08 GMT-0400 (Eastern Daylight Time)", 
-      endTime: "Thu Apr 23 2015 12:30:08 GMT-0400 (Eastern Daylight Time)",
-      __v: 0,
-      title: "this is my title"
-      }
-    ];*/
+    $scope.events = eventsData.data;
 
     /* event source that calls a function on every view switch */
     $scope.eventsF = function (start, end, timezone, callback) {
@@ -151,14 +144,12 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       // delete the record
       Calendar.delete(id)
         .then(function(response){
-          alert(response.toString());
           // remove event from events array
-          alert(index);
           $scope.events.splice(index,1);
 
         })
         .catch(function(err){
-          alert(err.toString());
+          console.log("error: ", err);
         });
     };
     /* Change View */
@@ -172,7 +163,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       }
     };
      /* Render Tooltip */
-    $scope.eventRender = function( event, element, view ) { 
+    $scope.eventRender = function( event, element, view ) {
         element.attr({'tooltip': event.title,
                       'tooltip-append-to-body': true});
         $compile(element)($scope);

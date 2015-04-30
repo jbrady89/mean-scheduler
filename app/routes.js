@@ -9,11 +9,12 @@ var Event = require('./models/calendar');
         // handle things like api calls
         // authentication routes
 
-        app.get('/api/calendar', function(req, res) {
+        app.get('/api/calendar/:id', function(req, res) {
             // get all the events for the current calendar
             // we do this by requesting all records that contain the trainerId
             // trainer 
-            var id = req.query.id;
+            var id = req.params.id;
+            console.log(req);
             console.log("returning results for trainer: ", id);
 
             Event.find({trainer: id}, function(err, events) {
@@ -25,6 +26,8 @@ var Event = require('./models/calendar');
                 var newArr = events.map(function(event){
                     var eventObj = event.toObject();
                     //delete eventObj["_id"];
+                    eventObj.startTime = new Date(eventObj.startTime.toString());
+                    eventObj.endTime = new Date(eventObj.endTime.toString());
                     return eventObj;
                 });
 
@@ -56,24 +59,27 @@ var Event = require('./models/calendar');
 
         // delete route goes here
 
-        // frontend routes =========================================================
-        // route to handle all angular requests
-        app.get('/', function(req, res) {
-            res.sendFile("index.html", { root: "./public"}); // load our public/index.html file
-        });
-
         app.delete('/api/calendar/:_id', function(req, res){
 
             console.log(req.params);
+
             Event.find( { _id: req.params._id } ).remove(function(err, data){
+
                 if (err){
                     console.log(err);
                     res.send(err);
                 }
+
                 res.json(data);
 
             });
 
+        });
+
+        // frontend routes =========================================================
+        // route to handle all angular requests
+        app.get('/', function(req, res) {
+            res.sendFile("index.html", { root: "./public"}); // load our public/index.html file
         });
 
     };

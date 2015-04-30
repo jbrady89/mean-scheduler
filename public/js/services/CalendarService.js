@@ -1,12 +1,14 @@
 // public/js/services/NerdService.js
-angular.module('CalendarService', []).factory('Calendar', ['$http', function($http) {
-
+angular.module('CalendarService', []).factory('Calendar', ['$http', function($http, $stateParams) {
+    console.log($stateParams);
     return {
         // call to get all sessions for the calendar
 
-        get : function(trainerInfo) {
-
-            return $http.get('/api/calendar', {params: trainerInfo });
+        get : function(id) {
+            console.log(id);
+            var url = "api/calendar/" + id;
+            console.log(url);
+            return $http.get(url);
         },
 
 
