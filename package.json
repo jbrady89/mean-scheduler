@@ -16,6 +16,8 @@
     "gulp-concat": "~2.5.2",
     "gulp-uglify": "~1.2.0",
     "gulp-rename": "~1.2.2",
-    "gulp-ng-annotate": "~0.5.2"
+    "gulp-ng-annotate": "~0.5.2",
+    "gulp-livereload": "~3.8.0",
+    "gulp-jshint": "~1.10.0"
   }
 }
