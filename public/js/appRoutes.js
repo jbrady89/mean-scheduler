@@ -4,6 +4,9 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	      // For any unmatched url, send to /route1
 	      $urlRouterProvider.otherwise("/");
 	      
+	      console.log($stateProvider);
+	      console.log($urlRouterProvider);
+	      
 	      $stateProvider
 	        .state('home', {
 	            url: "/",
@@ -28,6 +31,14 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	        	parent: "trainers",
 	        	url: "/:id/calendar",
 	        	templateUrl: "views/trainers.calendar.html",
+	           	resolve: {
+	           		CalendarService: 'Calendar',
+	           		eventsData : function(CalendarService, $stateParams){
+	           			console.log(CalendarService);
+	           			var id = $stateParams.id;
+	           			return CalendarService.get(id);
+	           		}
+	           	},
 	           	controller: "CalendarsCtrl"
 	        })
 
