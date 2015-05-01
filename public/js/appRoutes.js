@@ -34,7 +34,7 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	           	resolve: {
 	           		CalendarService: 'Calendar',
 	           		eventsData : function(CalendarService, $stateParams){
-	           			console.log(CalendarService);
+	           			//console.log(CalendarService);
 	           			var id = $stateParams.id;
 	           			return CalendarService.get(id);
 	           		}

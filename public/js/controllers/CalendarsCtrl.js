@@ -50,6 +50,15 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
 
     $scope.events = eventsData.data;
 
+    // $scope.events = [
+    //   {title: 'All Day Event',start: "04 05 2015 09:00:45", end: "04 05 2015 10:00:45"},
+    //   {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
+    //   {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
+    //   {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
+    //   {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false},
+    //   {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+    // ];
+
     /* event source that calls a function on every view switch */
     $scope.eventsF = function (start, end, timezone, callback) {
       var s = new Date(start).getTime() / 1000;
@@ -102,36 +111,48 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
     /* add custom event*/
     $scope.addEvent = function() {
+      console.log($scope.mytime);
+      var month = $scope.mytime.setMonth($scope.sessionMonth);
+      var day = $scope.mytime.setDate($scope.sessionDay);
+      var year = $scope.mytime.getYear();
+      var offset = $scope.mytime.getTimezoneOffset();
+      var offsetInHours = offset / 60;
+      var hours = $scope.mytime.getHours();
+      var minutes = $scope.mytime.getMinutes();
+      console.log($scope.mytime + "\n" + $scope.mytime.getHours());
+      console.log(month, day, year, hours, minutes);
 
-      $scope.mytime.setMonth($scope.sessionMonth - 1);
-      $scope.mytime.setDate($scope.sessionDay);
-      $scope.mytime.setYear(2015);
-      var start = $scope.mytime;
-      var endHour = $scope.mytime.getHours() + 1;
+      var startTime = new Date($scope.mytime.getTime());
+      var endTime = new Date(startTime + 3600);
+      var start = startTime.toString();
+      var end = endTime.toString();
+      //var endHour = $scope.mytime.getHours() + 1;
       // 
-      var end = new Date(start).setHours(endHour);
-      console.log(end);
+      //var end = new Date(start).setHours(endHour);
+      console.log(start, end);
 
       var clientName = "Jon",
           newEvent = {
             trainer: trainerId,
             clientName: clientName,
-            startTime: start,
-            endTime: new Date(end),
+            start: start,
+            end: end,
             title: $scope.title
           };
 
       
-        console.log($scope.events.length);
+        //console.log($scope.events.length);
         //$scope.events.push(newEvent);
-        console.log($scope.events.length);
+        //console.log($scope.events.length);
 
       // create new training session and save to db
       Calendar.create(newEvent)
         .then(function(response){
-          alert(response);
+          //alert(response);
+          var newEvent = response.data;
+          console.log(response);
           $scope.displayModal = false;
-          $scope.events.push(response);
+          $scope.events.push(newEvent);
         })
         .catch(function(err){
           alert(err);
@@ -164,6 +185,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
      /* Render Tooltip */
     $scope.eventRender = function( event, element, view ) {
+        console.log(element);
         element.attr({'tooltip': event.title,
                       'tooltip-append-to-body': true});
         $compile(element)($scope);

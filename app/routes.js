@@ -14,7 +14,7 @@ var Event = require('./models/calendar');
             // we do this by requesting all records that contain the trainerId
             // trainer 
             var id = req.params.id;
-            console.log(req);
+            //console.log(req);
             console.log("returning results for trainer: ", id);
 
             Event.find({trainer: id}, function(err, events) {
@@ -26,12 +26,13 @@ var Event = require('./models/calendar');
                 var newArr = events.map(function(event){
                     var eventObj = event.toObject();
                     //delete eventObj["_id"];
-                    eventObj.startTime = new Date(eventObj.startTime.toString());
-                    eventObj.endTime = new Date(eventObj.endTime.toString());
+                    eventObj.startTime = new Date(eventObj.startTime);
+                    eventObj.endTime = new Date(eventObj.endTime);
+                    console.log(typeof eventObj.startTime, typeof eventObj.endTime);
                     return eventObj;
                 });
 
-                console.log(newArr);
+                //console.log(newArr);
                 res.json(newArr); // return all scheduled events in JSON format
             });
         });
