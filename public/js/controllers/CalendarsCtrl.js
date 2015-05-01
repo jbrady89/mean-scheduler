@@ -111,15 +111,18 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
     };
     /* add custom event*/
     $scope.addEvent = function() {
-      console.log($scope.mytime);
-      var month = $scope.mytime.setMonth($scope.sessionMonth);
+      //console.log($scope.mytime);
+      console.log($scope.sessionMonth);
+      console.log($scope.sessionDay);
+      var month = $scope.mytime.setMonth($scope.sessionMonth - 1);
       var day = $scope.mytime.setDate($scope.sessionDay);
       var year = $scope.mytime.getYear();
       var offset = $scope.mytime.getTimezoneOffset();
       var offsetInHours = offset / 60;
       var hours = $scope.mytime.getHours();
+      var hoursMinusOffset = $scope.mytime.setHours(hours + offsetInHours);
       var minutes = $scope.mytime.getMinutes();
-      console.log($scope.mytime + "\n" + $scope.mytime.getHours());
+      //console.log($scope.mytime + "\n" + $scope.mytime.getHours());
       console.log(month, day, year, hours, minutes);
 
       var startTime = new Date($scope.mytime.getTime());
