@@ -32,7 +32,6 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
 
     /*Calendar.get(trainerInfo)
       .then(function(res){
-
         $scope.events = res.data;
         /*$scope.events = $scope.events.filter(function(event){
           console.log(event);
@@ -126,7 +125,8 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       console.log(month, day, year, hours, minutes);
 
       var startTime = new Date($scope.mytime.getTime());
-      var endTime = new Date(startTime + 3600);
+          $scope.mytime.setHours(hours + 1 + offsetInHours);
+      var endTime = new Date( $scope.mytime.getTime() );
       var start = startTime.toString();
       var end = endTime.toString();
       //var endHour = $scope.mytime.getHours() + 1;
@@ -156,6 +156,8 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
           console.log(response);
           $scope.displayModal = false;
           $scope.events.push(newEvent);
+          $scope.mytime = new Date();
+          $scope.mytime.setHours(9, 0);
         })
         .catch(function(err){
           alert(err);
