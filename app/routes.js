@@ -32,7 +32,7 @@ var Event = require('./models/calendar');
                 });
 
                 //console.log(newArr);
-                res.json(newArr); // return all scheduled events in JSON format
+                res.send(events); // return all scheduled events in JSON format
             });
         });
 

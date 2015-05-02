@@ -8,8 +8,8 @@ var Schema = mongoose.Schema;
 var eventSchema = new Schema({
 	trainer : Number,
 	clientName : String,
-	start : String,
-	end : String,
+	start : Object,
+	end : Object,
 	Title: String
 });
 

@@ -47,7 +47,14 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       });*/
   console.log(eventsData);
 
-    $scope.events = eventsData.data;
+      eventsData = eventsData.data.map(function(event){
+      event.start = new Date(event.start);
+      event.end = new Date(event.end);
+
+      return event;
+    });
+
+    $scope.events = eventsData;
 
     // $scope.events = [
     //   {title: 'All Day Event',start: "04 05 2015 09:00:45", end: "04 05 2015 10:00:45"},
@@ -105,14 +112,14 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
 
 
     $scope.showModal = function(){
-      console.log("show my modal");
+      //console.log("show my modal");
       $scope.displayModal = true;
     };
     /* add custom event*/
     $scope.addEvent = function() {
       //console.log($scope.mytime);
-      console.log($scope.sessionMonth);
-      console.log($scope.sessionDay);
+      //console.log($scope.sessionMonth);
+      //console.log($scope.sessionDay);
       var month = $scope.mytime.setMonth($scope.sessionMonth - 1);
       var day = $scope.mytime.setDate($scope.sessionDay);
       var year = $scope.mytime.getYear();
@@ -122,7 +129,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       var hoursMinusOffset = $scope.mytime.setHours(hours + offsetInHours);
       var minutes = $scope.mytime.getMinutes();
       //console.log($scope.mytime + "\n" + $scope.mytime.getHours());
-      console.log(month, day, year, hours, minutes);
+      //console.log(month, day, year, hours, minutes);
 
       var startTime = new Date($scope.mytime.getTime());
           $scope.mytime.setHours(hours + 1 + offsetInHours);
@@ -132,7 +139,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap']).controller('Cal
       //var endHour = $scope.mytime.getHours() + 1;
       // 
       //var end = new Date(start).setHours(endHour);
-      console.log(start, end);
+      //console.log(start, end);
 
       var clientName = "Jon",
           newEvent = {
