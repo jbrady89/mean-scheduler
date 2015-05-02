@@ -20,19 +20,20 @@ var Event = require('./models/calendar');
             Event.find({trainer: id}, function(err, events) {
 
                 //
-                if (err) res.send(err);
+                if (err)
+                res.send(err);
 
                 var newArr = events.map(function(event){
                     var eventObj = event.toObject();
                     //delete eventObj["_id"];
-                    //eventObj.startTime = new Date(eventObj.startTime);
-                    //eventObj.endTime = new Date(eventObj.endTime);
-                    console.log(typeof eventObj.start, typeof eventObj.end);
+                    eventObj.startTime = new Date(eventObj.startTime);
+                    eventObj.endTime = new Date(eventObj.endTime);
+                    console.log(eventObj.startTime, eventObj.endTime);
                     return eventObj;
                 });
 
                 //console.log(newArr);
-                res.send(events); // return all scheduled events in JSON format
+                res.json(newArr); // return all scheduled events in JSON format
             });
         });
 

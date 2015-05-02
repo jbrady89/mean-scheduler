@@ -4,7 +4,11 @@
     <div class="well">
         <div class="row">
             <div class="col-xs-4">
-                <div class="row btn-group calTools">             
+                
+                <div class="btn-group calTools">             
+                  <button class="btn" ng-click="addRemoveEventSource(eventSources,eventSource)">
+                    Toggle Source
+                  </button>
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >
                     Add Event
                   </button>
@@ -40,13 +44,13 @@
                   </div>
                 </div>
 
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="e in events">
+                <ul class="">
+                    <li ng-repeat="e in events">
                         <div class="alert alert-info">
-                            <a class="close" ng-click="remove($index)">X</a>
-                            <span ng-model="e.clientName">{{e.clientName}}</span> 
+                            <a class="close" ng-click="remove($index)">Close</a>
+                            <b> <input ng-model="e.title"></b> 
                             <div class="row">
-                                <span>{{e.start | date:"MMM dd"}} - {{e.end | date:"MMM dd"}}</span>
+                                <span>{{e.start | date:"MMM dd "}}:{{e.start | addOffset | date:"shortTime"}}-{{e.end | date:"ha "}}</span>
                             </div>
                         </div>
                     </li>
