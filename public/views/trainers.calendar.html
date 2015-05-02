@@ -5,10 +5,7 @@
         <div class="row">
             <div class="col-xs-4">
                 
-                <div class="btn-group calTools">             
-                  <button class="btn" ng-click="addRemoveEventSource(eventSources,eventSource)">
-                    Toggle Source
-                  </button>
+                <div class="row btn-group calTools">             
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >
                     Add Event
                   </button>
@@ -44,11 +41,11 @@
                   </div>
                 </div>
 
-                <ul class="">
-                    <li ng-repeat="e in events">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="e in events">
                         <div class="alert alert-info">
-                            <a class="close" ng-click="remove($index)">Close</a>
-                            <b> <input ng-model="e.title"></b> 
+                            <a class="close" ng-click="remove($index)">X</a>
+                            <span ng-model="e.clientName">{{e.clientName}}</span> 
                             <div class="row">
                                 <span>{{e.start}} - {{e.end}}</span>
                             </div>
