@@ -48,9 +48,9 @@
                     <li ng-repeat="e in events">
                         <div class="alert alert-info">
                             <a class="close" ng-click="remove($index)">Close</a>
-                            <b> <input ng-model="e.t"></b> 
+                            <b> <input ng-model="e.title"></b> 
                             <div class="row">
-                                <span>{{e.startTime}} - {{e.endTime}}</span>
+                                <span>{{e.start}} - {{e.end}}</span>
                             </div>
                         </div>
                     </li>
@@ -59,59 +59,12 @@
             </div>
 
             <div class="col-xs-8">
-                <tabset>
-                    <tab select="renderCalender('myCalendar1');">
-                      <tab-heading>
-                       <i class="glyphicon glyphicon-bell"></i> Calendar {{trainerId}}
-                      </tab-heading>
-                      <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
-                        <h4>{{alertMessage}}</h4>
-                      </div>
-                      <div class="btn-toolbar">
-                        <p class="pull-right lead">Calendar One View Options</p>
-                        <div class="btn-group">
-                            <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar1')">AgendaDay</button>
-                            <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar1')">AgendaWeek</button>
-                            <button class="btn btn-success" ng-click="changeView('month', 'myCalendar1')">Month</button>
-                        </div>
-                      </div>
-                    <div class="calendar" ng-model="eventSources" calendar="myCalendar1" ui-calendar="uiConfig.calendar"></div>
-                   </tab>
-                   <tab select="renderCalender('myCalendar2');">
-                    <tab-heading>
-                      <i class="glyphicon glyphicon-bell"></i> Calendar Two
-                    </tab-heading>
-                      <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
-                        <h4>{{alertMessage}}</h4>
-                      </div>
-                      <div class="btn-toolbar">
-                        <p class="pull-right lead">Calendar Two View Options</p>
-                        <div class="btn-group">
-                            <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar2')">AgendaDay</button>
-                            <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar2')">AgendaWeek</button>
-                            <button class="btn btn-success" ng-click="changeView('month', 'myCalendar2')">Month</button>
-                        </div>
-                      </div>
-                    <div class="calendar" ng-model="eventSources" calendar="myCalendar2" ui-calendar="uiConfig.calendar"></div>
-                   </tab>
-                   <tab select="renderCalender('myCalendar3');">
-                    <tab-heading>
-                      <i class="glyphicon glyphicon-bell"></i> Calendar Three
-                    </tab-heading>
-                      <div class="alert-success calAlert">
-                        <h4>This calendar uses the extended form</h4>
-                      </div>
-                      <div class="btn-toolbar">
-                        <p class="pull-right lead">Calendar Three View Options</p>
-                        <div class="btn-group">
-                            <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar3')">AgendaDay</button>
-                            <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar3')">AgendaWeek</button>
-                            <button class="btn btn-success" ng-click="changeView('month', 'myCalendar3')">Month</button>
-                        </div>
-                      </div>
-                    <div class="calendar" ng-model="eventSources2" calendar="myCalendar3" ui-calendar="uiConfig.calendar"></div>
-                   </tab>
-                </tabset>
+
+                <i class="glyphicon glyphicon-bell"></i> Calendar {{trainerId}}
+                <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
+                  <h4>{{alertMessage}}</h4>
+                </div>
+                <div class="calendar" ng-model="eventSources" ui-calendar="uiConfig.calendar"></div>
             </div>
         </div>
     </div>
