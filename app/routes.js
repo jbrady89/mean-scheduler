@@ -20,15 +20,14 @@ var Event = require('./models/calendar');
             Event.find({trainer: id}, function(err, events) {
 
                 //
-                if (err)
-                res.send(err);
+                if (err) res.send(err);
 
                 var newArr = events.map(function(event){
                     var eventObj = event.toObject();
                     //delete eventObj["_id"];
-                    eventObj.startTime = new Date(eventObj.startTime);
-                    eventObj.endTime = new Date(eventObj.endTime);
-                    console.log(typeof eventObj.startTime, typeof eventObj.endTime);
+                    //eventObj.startTime = new Date(eventObj.startTime);
+                    //eventObj.endTime = new Date(eventObj.endTime);
+                    console.log(typeof eventObj.start, typeof eventObj.end);
                     return eventObj;
                 });
 
