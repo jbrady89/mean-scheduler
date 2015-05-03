@@ -157,7 +157,8 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap'])
             clientName: clientName,
             start: start,
             end: end,
-            title: $scope.title
+            title: $scope.title,
+            stick: true
           };
 
       
@@ -172,6 +173,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap'])
           var newEvent = response.data;
           //console.log(response);
           $scope.displayModal = false;
+          console.log(newEvent);
           $scope.events.push(newEvent);
           $scope.mytime = new Date();
           $scope.mytime.setHours(9, 0);
