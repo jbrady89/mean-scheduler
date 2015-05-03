@@ -10,7 +10,8 @@ var eventSchema = new Schema({
 	clientName : String,
 	start : Object,
 	end : Object,
-	Title: String
+	Title: String,
+	stick: {type: Boolean, default: true}
 });
 
 
