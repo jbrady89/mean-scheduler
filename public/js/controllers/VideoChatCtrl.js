@@ -6,11 +6,14 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
 
+    // when user joins the view
     socket.on("connect", function(socket){
     	console.log("new socket: " + socket);
     });
 
+    // disconnect when user leaves the view
     $scope.$on("$destroy", function(){
+    	localStream.stop();
     	socket.disconnect();
     	socket.emit("disconnect");
     });
@@ -38,9 +41,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	      trace("getUserMedia error: ", error);
 	    });
 
-	  socket.on("connect", function(){
-	  	console.log("user connected");
-	  });
+	  socket.emit("join", "test");
 	}
 
 	$scope.endCall = function(){
