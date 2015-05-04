@@ -1,1 +1,23 @@
 <h1>The Chat View</h1>
+<div class="well">
+
+	<div class="btn btn-default" ng-click="start()" id="startButton">Start a new Chat</div>
+	<div class="btn btn-default" id="callButton">Call</div>
+	<div class="btn btn-default" id="hangUpButton">End Call</div>
+
+	<div class="row">
+
+		<div class="localVideoContainer col-xs-4"  style="border: 1px solid black;">
+
+			<video style="display: block; width: 100%" id="localVideo" autoplay/>
+
+		</div>
+
+		<div class="remoteVideoContainer col-xs-8" style="border: 1px solid black;" >
+
+			<video id="remoteStream" autoplay/>
+
+		</div>
+
+	</div>
+</div>
