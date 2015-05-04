@@ -65,13 +65,18 @@ io.on('connection', function(socket){
     }else if(numClients == 1){
 
       socket.join(room);
-      socket.emit('ready', room);
+      //socket.emit('ready', room);
       socket.broadcast.emit('ready', room);
 
     }else{
       socket.emit('full', room);
     }
 
+  });
+
+  // broadcast to the other browser when a candidate becomes available
+  socket.on('candidate', function(candidate){
+  	socket.broadcast.emit('candidate', candidate);
   });
 
   socket.on('disconnect', function(socket){

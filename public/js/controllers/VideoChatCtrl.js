@@ -14,6 +14,13 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
     	alert('sorry this room is already full');
     });
 
+    socket.on("candidate", function(candidate){
+    	rtcCandidate = new RTCIceCandidate(JSON.parse(candidate));
+    	console.log(rtcCandidate);
+    	peerConnection.addIceCandidate(rtcCandidate);
+
+    });
+
     // disconnect when user leaves the view
     $scope.$on("$destroy", function(){
     	localStream.stop();
@@ -69,14 +76,17 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	  var servers = null;
 
-	  localPeerConnection = new RTCPeerConnection(servers);
+	  localPeerConnection = new RTCPeerConnection({
+	  	iceServers: [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]
+	  });
+
 	  trace("Created local peer connection object localPeerConnection");
 	  localPeerConnection.onicecandidate = gotLocalIceCandidate;
 
-	  remotePeerConnection = new RTCPeerConnection(servers);
+	  /*remotePeerConnection = new RTCPeerConnection(servers);
 	  trace("Created remote peer connection object remotePeerConnection");
 	  remotePeerConnection.onicecandidate = gotRemoteIceCandidate;
-	  remotePeerConnection.onaddstream = gotRemoteStream;
+	  remotePeerConnection.onaddstream = gotRemoteStream;*/
 
 	  localPeerConnection.addStream(localStream);
 	  trace("Added localStream to localPeerConnection");
@@ -114,9 +124,12 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	function gotLocalIceCandidate(event){
 	  console.log(event);
+	  //alert("we have a local ice candidate");
 	  if (event.candidate) {
 	    remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+	    var candidate = event.candidate;
 	    trace("Local ICE candidate: \n" + event.candidate.candidate);
+	    socket.emit("candidate", candidate);
 	  }
 	}
 
