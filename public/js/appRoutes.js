@@ -41,6 +41,12 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	           	},
 	           	controller: "CalendarsCtrl"
 	        })
+	        .state('trainers.about.chat', {
+	        	parent: "trainers",
+	        	url: "/:id/chat",
+	        	templateUrl: "views/trainers.chat.html",
+	        	controller: "VideoChatCtrl"
+	        })
 
 
 	});
