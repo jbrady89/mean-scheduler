@@ -4,8 +4,8 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	      // For any unmatched url, send to /route1
 	      $urlRouterProvider.otherwise("/");
 	      
-	      console.log($stateProvider);
-	      console.log($urlRouterProvider);
+	      //console.log($stateProvider);
+	      //console.log($urlRouterProvider);
 	      
 	      $stateProvider
 	        .state('home', {
