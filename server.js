@@ -48,22 +48,30 @@ var io = require("socket.io").listen(server);
 var connectionCount = 0;
 
 io.on('connection', function(socket){
+
   connectionCount += 1;
   console.log("we have a new connection");
   console.log("users connected: ", connectionCount);
+
   socket.on('join', function(room){
-  	console.log("a user is streaming video");
+  	console.log(room);
     var clients = io.sockets.adapter.rooms[room];
     var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+
     if(numClients == 0){
+
       socket.join(room);
+
     }else if(numClients == 1){
+
       socket.join(room);
       socket.emit('ready', room);
       socket.broadcast.emit('ready', room);
+
     }else{
       socket.emit('full', room);
     }
+
   });
 
   socket.on('disconnect', function(socket){

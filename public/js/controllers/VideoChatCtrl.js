@@ -1,24 +1,29 @@
-angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope){
+angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope, $stateParams){
 
 	//document.write("The Chat Controller");
 	console.log("we made it to the chat view");
-
+	var roomId = $stateParams.id;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
 
-    // when user joins the view
-    socket.on("connect", function(socket){
-    	console.log("new socket: " + socket);
+    socket.on("ready", function(data){
+    	console.log('ready to start a call');
+    });
+
+    socket.on("full", function(data){
+    	alert('sorry this room is already full');
     });
 
     // disconnect when user leaves the view
     $scope.$on("$destroy", function(){
     	localStream.stop();
     	socket.disconnect();
-    	socket.emit("disconnect");
+    	//socket.emit("disconnect");
     });
 
 	var localStream, localPeerConnection, remotePeerConnection;
+	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+
 
 
 	function trace(text) {
@@ -41,7 +46,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	      trace("getUserMedia error: ", error);
 	    });
 
-	  socket.emit("join", "test");
+	  socket.emit("join", "trainer" + roomId + "'s room");
 	}
 
 	$scope.endCall = function(){
