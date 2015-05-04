@@ -43,7 +43,35 @@ require('./app/routes')(app); // configure our routes
 // start app ===============================================
 // startup our app at http://localhost:8080
 var server = app.listen(port);
-var io = require("socket.io").listen(server);             
+var io = require("socket.io").listen(server);  
+
+var connectionCount = 0;
+
+io.on('connection', function(socket){
+  connectionCount += 1;
+  console.log("we have a new connection");
+  console.log("users connected: ", connectionCount);
+  socket.on('join', function(room){
+  	console.log("a user is streaming video");
+    var clients = io.sockets.adapter.rooms[room];
+    var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+    if(numClients == 0){
+      socket.join(room);
+    }else if(numClients == 1){
+      socket.join(room);
+      socket.emit('ready', room);
+      socket.broadcast.emit('ready', room);
+    }else{
+      socket.emit('full', room);
+    }
+  });
+
+  socket.on('disconnect', function(socket){
+  	console.log("user disconnected");
+  	connectionCount -= 1;
+  	console.log("we now have " + connectionCount + " connections");
+  });
+});          
 
 // shoutout to the user                     
 console.log('Magic happens on port ' + port);
