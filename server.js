@@ -42,7 +42,8 @@ require('./app/routes')(app); // configure our routes
 
 // start app ===============================================
 // startup our app at http://localhost:8080
-app.listen(port);               
+var server = app.listen(port);
+var io = require("socket.io").listen(server);             
 
 // shoutout to the user                     
 console.log('Magic happens on port ' + port);
