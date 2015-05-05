@@ -65,7 +65,7 @@ io.on('connection', function(socket){
     }else if(numClients == 1){
 
       socket.join(room);
-      //socket.emit('ready', room);
+      socket.emit('ready', room);
       socket.broadcast.emit('ready', room);
 
     }else{
@@ -76,7 +76,18 @@ io.on('connection', function(socket){
 
   // broadcast to the other browser when a candidate becomes available
   socket.on('candidate', function(candidate){
+  	console.log("candidate", candidate);
   	socket.broadcast.emit('candidate', candidate);
+  });
+
+  socket.on('offer', function(offer){
+  	console.log("offer: " , offer);
+  	socket.broadcast.emit('offer', offer);
+  });
+
+  socket.on('answer', function(answer){
+  	console.log("we got an answer answer: ", answer);
+  	socket.broadcast.emit("answer", answer);
   });
 
   socket.on('disconnect', function(socket){

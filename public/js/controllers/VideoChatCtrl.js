@@ -5,36 +5,28 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	var roomId = $stateParams.id;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
+    var localStream, localPeerConnection, remotePeerConnection;
+	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+
 
     socket.on("ready", function(data){
     	console.log('ready to start a call');
     });
 
     socket.on("full", function(data){
-    	alert('sorry this room is already full');
-    });
-
-    socket.on("candidate", function(candidate){
-    	rtcCandidate = new RTCIceCandidate(JSON.parse(candidate));
-    	console.log(rtcCandidate);
-    	peerConnection.addIceCandidate(rtcCandidate);
-
+    	//alert('sorry this room is already full');
     });
 
     // disconnect when user leaves the view
     $scope.$on("$destroy", function(){
-    	localStream.stop();
-    	socket.disconnect();
+    	//localStream.stop();
+    	//socket.disconnect();
     	//socket.emit("disconnect");
     });
 
-	var localStream, localPeerConnection, remotePeerConnection;
-	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
-
-
 
 	function trace(text) {
-	  console.log((performance.now() / 1000).toFixed(3) + ": " + text);
+	  //console.log((performance.now() / 1000).toFixed(3) + ": " + text);
 	}
 
 	function gotStream(stream){
@@ -62,48 +54,77 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	}
 
 	$scope.call = function() {
-	  //callButton.disabled = true;
-	  //hangupButton.disabled = false;
-	  console.log("calling");
-	  trace("Starting call");
+		//callButton.disabled = true;
+		//hangupButton.disabled = false;
+		console.log("calling");
+		trace("Starting call");
 
-	  if (localStream.getVideoTracks().length > 0) {
-	    trace('Using video device: ' + localStream.getVideoTracks()[0].label);
-	  }
-	  if (localStream.getAudioTracks().length > 0) {
-	    trace('Using audio device: ' + localStream.getAudioTracks()[0].label);
-	  }
+		if (localStream.getVideoTracks().length > 0) {
+		trace('Using video device: ' + localStream.getVideoTracks()[0].label);
+		}
+		if (localStream.getAudioTracks().length > 0) {
+		trace('Using audio device: ' + localStream.getAudioTracks()[0].label);
+		}
 
-	  var servers = null;
+		var servers = {
+			iceServers: [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]
+		};
 
-	  localPeerConnection = new RTCPeerConnection({
-	  	iceServers: [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]
-	  });
+		localPeerConnection = new RTCPeerConnection(servers);
 
-	  trace("Created local peer connection object localPeerConnection");
-	  localPeerConnection.onicecandidate = gotLocalIceCandidate;
+		//trace("Created local peer connection object localPeerConnection");
+		localPeerConnection.addStream(localStream);
+		localPeerConnection.onicecandidate = gotLocalIceCandidate;
+		localPeerConnection.onaddstream = gotRemoteStream;
 
-	  /*remotePeerConnection = new RTCPeerConnection(servers);
-	  trace("Created remote peer connection object remotePeerConnection");
-	  remotePeerConnection.onicecandidate = gotRemoteIceCandidate;
-	  remotePeerConnection.onaddstream = gotRemoteStream;*/
+		remotePeerConnection = new RTCPeerConnection(servers);
+		console.log(remotePeerConnection);
+		//trace("Created remote peer connection object remotePeerConnection");
+		remotePeerConnection.onicecandidate = gotRemoteIceCandidate;
+		remotePeerConnection.onaddstream = gotRemoteStream;
 
-	  localPeerConnection.addStream(localStream);
-	  trace("Added localStream to localPeerConnection");
-	  localPeerConnection.createOffer(gotLocalDescription,handleError);
+		//trace("Added localStream to localPeerConnection");
+		localPeerConnection.createOffer(gotLocalDescription,handleError);
+		
+		socket.on("candidate", function(candidate){
+			rtcCandidate = new RTCIceCandidate(candidate);
+			//console.log(rtcCandidate);
+			localPeerConnection.addIceCandidate(rtcCandidate);
+			console.log(localPeerConnection.addIceCandidate);
+		});
+
+		socket.on("offer", function(offer){
+			console.log("we got an offer");
+			console.log(offer);
+			rtcOffer = new RTCSessionDescription(JSON.parse(offer));
+			remotePeerConnection.setRemoteDescription(rtcOffer);
+			remotePeerConnection.createAnswer(gotRemoteDescription,handleError);
+		});
+
+        socket.on("answer", function(answer){
+        	console.log("we got an answer");
+	    	var rtcAnswer = new RTCSessionDescription(JSON.parse(answer));
+	    	remotePeerConnection.setRemoteDescription(rtcAnswer);
+	    });
 	}
 
 	function gotLocalDescription(description){
-	  localPeerConnection.setLocalDescription(description);
-	  trace("Offer from localPeerConnection: \n" + description.sdp);
-	  remotePeerConnection.setRemoteDescription(description);
-	  remotePeerConnection.createAnswer(gotRemoteDescription,handleError);
+		console.log("description:", description);
+		localPeerConnection.setLocalDescription(description);
+		// send the info back to the server
+		socket.emit("offer", JSON.stringify(description));
+		//trace("Offer from localPeerConnection: \n" + description.sdp);
+		//rtcOffer = new RTCSessionDescription(JSON.parse(description));
+		//remotePeerConnection.setRemoteDescription(rtcOffer);
+		//remotePeerConnection.createAnswer(gotRemoteDescription,handleError);
 	}
 
-	function gotRemoteDescription(description){
-	  remotePeerConnection.setLocalDescription(description);
-	  trace("Answer from remotePeerConnection: \n" + description.sdp);
-	  localPeerConnection.setRemoteDescription(description);
+	function gotRemoteDescription(answer){
+		console.log("we got an answer: " + answer);
+	  remotePeerConnection.setLocalDescription(answer);
+	  //trace("Answer from remotePeerConnection: \n" + description.sdp);
+	  //localPeerConnection.setRemoteDescription(description);
+	  socket.emit('answer', JSON.stringify(answer));
 	}
 
 	$scope.hangup = function hangup() {
@@ -117,16 +138,18 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	}
 
 	function gotRemoteStream(event){
-	  remoteVideo.src = URL.createObjectURL(event.stream);
-	  trace("Received remote stream");
-	  console.log(event);
+	  console.log("we got the remote stream");
+	  $remoteVideo = $('#remoteVideo')[0];
+	  $remoteVideo.src = URL.createObjectURL(event.stream);
+	  //trace("Received remote stream");
+	  //console.log(event);
 	}
 
 	function gotLocalIceCandidate(event){
-	  console.log(event);
-	  //alert("we have a local ice candidate");
+	  
+	  console.log("we have a local ice candidate");
 	  if (event.candidate) {
-	    remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+	    localPeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
 	    var candidate = event.candidate;
 	    trace("Local ICE candidate: \n" + event.candidate.candidate);
 	    socket.emit("candidate", candidate);
@@ -134,12 +157,18 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	}
 
 	function gotRemoteIceCandidate(event){
+		console.log("got remote ice candidate");
 	  if (event.candidate) {
-	    localPeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
-	    trace("Remote ICE candidate: \n " + event.candidate.candidate);
+	  	console.log(event.candidate);
+	  	var candidate = event.candidate;
+	    remotePeerConnection.addIceCandidate(new RTCIceCandidate(event.candidate));
+	    //trace("Remote ICE candidate: \n " + event.candidate.candidate);
+	    socket.emit("candidate", candidate);
 	  }
 	}
 
-	function handleError(){}
+	function handleError(error){
+		console.log("there was an error:", error);
+	}
 
 });
