@@ -50,11 +50,11 @@ var connectionCount = 0;
 io.on('connection', function(socket){
 
   connectionCount += 1;
-  console.log("we have a new connection");
-  console.log("users connected: ", connectionCount);
+  //console.log("we have a new connection");
+  //console.log("users connected: ", connectionCount);
 
   socket.on('join', function(room){
-  	console.log(room);
+  	//console.log(room);
     var clients = io.sockets.adapter.rooms[room];
     var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
 
@@ -74,21 +74,31 @@ io.on('connection', function(socket){
 
   });
 
+  // use this for exchanging ids
+  socket.on("newPeer", function(data){
+  	console.log("new peer:", data);
+  	socket.broadcast.emit("newPeer", data);
+  });
+
+  socket.on("call", function(id){
+  	socket.broadcast.emit("call", id);
+  });
+
   // broadcast to the other browser when a candidate becomes available
   socket.on('candidate', function(candidate){
-  	console.log("candidate", candidate);
+  	console.log("we have an ICE candidate, sending it back to the client");
   	socket.broadcast.emit('candidate', candidate);
   });
 
   socket.on('offer', function(offer){
-  	console.log("offer: " , offer);
+  	console.log("we got an offer: " , offer);
   	socket.broadcast.emit('offer', offer);
   });
 
-  socket.on('answer', function(answer){
+  /*socket.on('answer', function(answer){
   	console.log("we got an answer answer: ", answer);
   	socket.broadcast.emit("answer", answer);
-  });
+  });*/
 
   socket.on('disconnect', function(socket){
   	console.log("user disconnected");

@@ -1,13 +1,38 @@
-<section class="experiment">
-    <section>
+<h1>The Chat View</h1>
+<div class="well">
 
+	<div class="btn btn-default" ng-click="start()" id="startButton">Start a new Chat</div>
+	<div class="btn btn-default" id="callButton" ng-click="call()">Call</div>
+	<div class="btn btn-default" id="hangUpButton" ng-click="hangup()">End Call</div>
+
+	<div class="row">
+
+		<div class="localVideoContainer col-xs-4"  style="border: 1px solid black;">
+
+			<video style="display: block; width: 100%" id="localVideo" autoplay muted/>
+
+		</div>
+
+		<div class="remoteVideoContainer col-xs-8" style="border: 1px solid black;" >
+
+			<video style="display: block; width: 100%" id="remoteVideo" autoplay/>
+
+		</div>
+
+	</div>
+</div>
+
+<!-- 
+	<section class="experiment">
+    <section>
+		
         <input type="text" id="conference-name">
         <button id="setup-new-conference" class="setup">Setup New Conference</button>
     </section>
-
-    <!-- list of all available broadcasting rooms -->
+	list of rooms to connect to
     <table style="width: 100%;" id="rooms-list"></table>
 
-    <!-- local/remote videos container -->
+    container for video elements
     <div id="videos-container"></div>
 </section>
+-->

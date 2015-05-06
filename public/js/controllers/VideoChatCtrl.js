@@ -1,21 +1,55 @@
 angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope, $stateParams){
 
 	//document.write("The Chat Controller");
-	/*console.log("we made it to the chat view");
+	console.log("we made it to the chat view");
 	var roomId = $stateParams.id;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
     var localStream, peerConnection;
 	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+	var peerKey = "sjln47ungrd7k3xr";
 
 
-    socket.on("ready", function(data){
-    	console.log('ready to start a call');
-    });
+	var peer = new Peer({"key": peerKey});
+	var myId,
+		theirId;
 
-    socket.on("full", function(data){
-    	//alert('sorry this room is already full');
-    });
+	peer.on("open", function(id){
+		console.log("my peer id is: ", id);
+		socket.emit("newPeer", id);
+		myId = id;
+	});
+
+	$scope.call = function(){
+		console.log("we are initiating a call with user: ", theirId);
+		var call = peer.call(theirId, localStream);
+
+		// if we dont already have their stream
+		// this will trigger a call on their end so we start getting it
+		console.log($('#remoteVideo').prop('src'));
+		if ($('#remoteVideo').prop('src') === "") socket.emit("call", myId);
+	};
+
+	peer.on("call", function(call){
+		console.log("answering the call");
+		call.answer(localStream);
+
+		if (window.existingCall) {
+	        window.existingCall.close();
+	      }
+	      // Wait for stream on the call, then set peer video display
+	      call.on('stream', function(stream){
+	        $('#remoteVideo').prop('src', URL.createObjectURL(stream));
+	      });
+	});
+
+	socket.on("call", function(id){
+		angular.element("#callButton").trigger('click');
+	});
+
+	socket.on("newPeer", function(id){
+		theirId = id;
+	});
 
     // disconnect when user leaves the view
     $scope.$on("$destroy", function(){
@@ -24,16 +58,24 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
     	//socket.emit("disconnect");
     });
 
-
-	function trace(text) {
+	/*function trace(text) {
 	  //console.log((performance.now() / 1000).toFixed(3) + ": " + text);
-	}
+	}*/
+
+	socket.on("ready", function(){
+		alert("ready to start a call!");
+	});
 
 	function gotStream(stream){
 	  trace("Received local stream");
 	  var localVideo = $('#localVideo')[0];
 	  localVideo.src = window.URL.createObjectURL(stream);
 	  localStream = stream;
+	  socket.emit("join", "trainer" + roomId + "'s room");
+	  //socket.on("offer", function(offer){
+	  //	console.log("this is our returned offer:", offer)
+
+	  //});
 	 //callButton.disabled = false;
 	}
 
@@ -44,27 +86,90 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	    function(error) {
 	      trace("getUserMedia error: ", error);
 	    });
-
-	  socket.emit("join", "trainer" + roomId + "'s room");
 	}
 
 	$scope.endCall = function(){
 		localStream.stop();
 		$('#localVideo').attr('src', "");
+	}	
+/*
+	var VideoChat = {
+
+		
+
+		requestMediaStream: function(event){
+			console.log("hello");
+		    getUserMedia(
+		      {video: true, audio: true},
+		      VideoChat.onMediaStream,
+		      VideoChat.noMediaStream
+		    );
+		},
+
+		onMediaStream: function(stream){
+		    VideoChat.localVideo = document.getElementById('localVideo');
+		    VideoChat.localStream = stream;
+		    //VideoChat.videoButton.setAttribute('disabled', 'disabled');
+		    VideoChat.localVideo.src = window.URL.createObjectURL(stream);
+		    socket.emit('join', 'test');
+		    socket.on('ready', console.log("ready to start a call!"));
+		},
+
+		noMediaStream: function(){
+		    console.log("No media stream for us.");
+		    // Sad trombone.
+		},
+
+		onCandidate : function(){
+		    rtcCandidate = new RTCIceCandidate(JSON.parse(candidate));
+		    VideoChat.peerConnection.addIceCandidate(rtcCandidate);
+
+		},
+
+		createOffer : function(){
+
+		},
+
+		onIceCandidate : function(){
+			if(event.candidate){
+			  console.log('Generated candidate!');
+			  socket.emit('candidate', JSON.stringify(event.candidate));
+			}
+		}, 
+
+		init: function(callback){
+			return function(){
+				console.log("calling");
+				trace("Starting call");
+
+				var servers = {
+					iceServers: [{'url': 'stun:stun.l.google.com:19302'}]
+				};
+
+				VideoChat.peerConnection = new RTCPeerConnection(servers);
+				VideoChat.peerConnection.onicecandidate = VideoChat.onIceCandidate;
+				socket.on("candidate", VideoChat.onCandidate);
+				peerConnection.addStream(localStream);
+
+			}
+
+		}
 	}
 
-	$scope.call = function() {
-		//callButton.disabled = true;
-		//hangupButton.disabled = false;
+	$scope.requestMediaStream = VideoChat.requestMediaStream;
+
+		/*	peerConnection.createOffer(
+				function(offer){
+					peerConnection.setLocalDescription(offer);
+					socket.emit("offer", JSON.stringify(offer));
+				},
+				function(err){
+					console.log("error creating offer");
+				}
+			);
+		}
 		console.log("calling");
 		trace("Starting call");
-
-		if (localStream.getVideoTracks().length > 0) {
-		trace('Using video device: ' + localStream.getVideoTracks()[0].label);
-		}
-		if (localStream.getAudioTracks().length > 0) {
-		trace('Using audio device: ' + localStream.getAudioTracks()[0].label);
-		}
 
 		var servers = {
 			iceServers: [{'url': 'stun:stun.l.google.com:19302'}]
@@ -76,9 +181,17 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		peerConnection.onicecandidate = gotIceCandidate;
 		peerConnection.onaddstream = gotRemoteStream;
 		peerConnection.addStream(localStream);
-
-		//trace("Added localStream to localPeerConnection");
-		peerConnection.createOffer(gotLocalDescription,handleError);
+		peerConnection.createOffer(
+			function(offer){
+				peerConnection.setLocalDescription(offer);
+				socket.emit("offer", JSON.stringify(offer));
+			},
+			function(err){
+				console.log("error creating offer");
+			}
+		);
+		trace("Added localStream to localPeerConnection");
+		//peerConnection.createOffer(gotLocalDescription,handleError);
 		
 		socket.on("candidate", function(candidate){
 			rtcCandidate = new RTCIceCandidate(candidate);
@@ -91,9 +204,10 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			console.log("we got an offer");
 			console.log(offer);
 			rtcOffer = new RTCSessionDescription(JSON.parse(offer));
-			peerConnection.setRemoteDescription(rtcOffer, function(){
-				peerConnection.createAnswer(gotRemoteDescription,handleError);
-
+			peerConnection.setRemoteDescription(rtcOffer);
+			peerConnection.createAnswer(function(answer){
+				peerConnection.setLocalDescription(answer);
+				socket.emit("answer", amswer);
 			});
 		});
 
@@ -168,6 +282,10 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		console.log("there was an error:", error);
 	}*/
 
+
+
+	/*** a working version ***/
+	/*
 	var connection = new RTCMultiConnection();
         connection.session = {
             audio: true,
@@ -230,5 +348,4 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
                 if (location.hash.length > 2) uniqueToken.parentNode.parentNode.parentNode.innerHTML = '<h2 style="text-align:center;"><a href="' + location.href + '" target="_blank">Share this link</a></h2>';
                 else uniqueToken.innerHTML = uniqueToken.parentNode.parentNode.href = '#' + (Math.random() * new Date().getTime()).toString(36).toUpperCase().replace(/\./g, '-');
         })();*/
-
 });
