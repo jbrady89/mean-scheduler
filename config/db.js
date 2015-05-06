@@ -1,4 +1,4 @@
 
 module.exports = {
-        url : 'mongodb://localhost/27017/mean-scheduler'
+        url : 'mongodb://jbDB:jbDB@ds031892.mongolab.com:31892/mean-scheduler'
     };
