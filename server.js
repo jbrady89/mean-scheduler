@@ -103,7 +103,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(socket){
   	console.log("user disconnected");
   	connectionCount -= 1;
-  	console.log("we now have " + connectionCount + " connections");
+  	//console.log("we now have " + connectionCount + " connections");
   });
 });          
 

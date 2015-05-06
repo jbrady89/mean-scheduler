@@ -26,7 +26,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 		// if we dont already have their stream
 		// this will trigger a call on their end so we start getting it
-		console.log($('#remoteVideo').prop('src'));
 		if ($('#remoteVideo').prop('src') === "") socket.emit("call", myId);
 	};
 
@@ -44,7 +43,11 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	});
 
 	socket.on("call", function(id){
+		// trigger a call from other peer so we can answer and get their stream
+		console.log(id);
+		theirId = id;
 		angular.element("#callButton").trigger('click');
+		//var call = peer.call(id, localStream);
 	});
 
 	socket.on("newPeer", function(id){
