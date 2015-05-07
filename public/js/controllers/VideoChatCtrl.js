@@ -17,10 +17,125 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	peer.on("open", function(id){
 		console.log("my peer id is: ", id);
 		socket.emit("newPeer", id);
+		socket.emit("join", "test room");
 		myId = id;
 	});
 
-	$scope.call = function(){
+	var localVideo;
+	var remoteVideo;
+	var peerConnection;
+	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+
+	function getUserMediaSuccess(stream) {
+	    localStream = stream;
+	    localVideo.src = window.URL.createObjectURL(stream);
+	}
+
+	function getUserMediaError(error) {
+	    console.log(error);
+	}
+
+	$scope.start = function(isCaller) {
+
+	    peerConnection = new RTCPeerConnection(peerConnectionConfig);
+	    peerConnection.onicecandidate = gotIceCandidate;
+	    peerConnection.onaddstream = gotRemoteStream;
+	    peerConnection.addStream(localStream);
+
+	    if(isCaller) {
+	    	console.log(myId + "is creating offer");
+	        peerConnection.createOffer(gotDescription, createOfferError);
+	    }
+
+	}
+
+	function gotDescription(description) {
+	    console.log('got description');
+	    peerConnection.setLocalDescription(description, function () {
+	        socket.emit('message', JSON.stringify(description) );
+	    }, function() {console.log('set description error')});
+	}
+
+	function gotIceCandidate(event) {
+	    if(event.candidate != null) {
+	        socket.emit('message', JSON.stringify(event.candidate));
+	    }
+	}
+
+	function gotRemoteStream(event) {
+	    console.log("got remote stream");
+	    remoteVideo.src = window.URL.createObjectURL(event.stream);
+	}
+
+	function createOfferError(error) {
+	    console.log(error);
+	}
+
+	function createAnswerError(error){
+		console.log(error);
+	}
+
+	function pageReady() {
+	    localVideo = document.getElementById('localVideo');
+	    remoteVideo = document.getElementById('remoteVideo');
+
+	    socket.on("message", function(message){
+	    	if(!peerConnection) {
+	    		console.log(myId + "is creating a new connection");
+	    		$scope.start(false);
+	    	}
+
+		    var signal = JSON.parse(message);
+		    //console.log("signal: ", signal);
+		    if(signal.sdp) {
+		    	console.log(myId + " received the " + signal["type"])
+
+		    	if (signal["type"] == "answer"){
+		    		var rtcAnswer = new RTCSessionDescription(signal);
+    				peerConnection.setRemoteDescription(rtcAnswer, function(){
+    					console.log(myId + "set description with the answer");
+    				}, function(err){
+    					console.log("there was an error setting the description");
+    				});
+		    	} else {
+		    		
+		    	//console.log("signal is SDP");
+		    	//console.log(signal.sdp)
+			    	var rtcOffer = new RTCSessionDescription( signal );
+			        peerConnection.setRemoteDescription( rtcOffer , function() {
+			        	console.log(myId + "is creating an answer");
+			            peerConnection.createAnswer(function(answer){
+			            	console.log("answer has been sent");
+			            	peerConnection.setLocalDescription(answer);
+			            	socket.emit("message", JSON.stringify(answer) );
+
+			            }, 
+			            function (err){
+			            	console.log(err);
+			     		});
+			        });
+			    };
+		    } else if(signal.ice) {
+		    	console.log("signal is ICE");
+		    	iceCandidate = signal;
+		        peerConnection.addIceCandidate( new RTCIceCandidate( signal ) );
+		    }
+		});
+
+		var constraints = {
+	        video: true,
+	        audio: true,
+	    };
+
+	    if(getUserMedia) {
+	        getUserMedia(constraints, getUserMediaSuccess, getUserMediaError);
+	    } else {
+	        alert('Your browser does not support getUserMedia API');
+	    }
+
+	};
+
+	/*$scope.call = function(){
 		console.log("we are initiating a call with user: ", theirId);
 		var call = peer.call(theirId, localStream);
 
@@ -67,9 +182,10 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	socket.on("ready", function(){
 		alert("ready to start a call!");
+		pageReady();
 	});
 
-	function gotStream(stream){
+	/*function gotStream(stream){
 	  trace("Received local stream");
 	  var localVideo = $('#localVideo')[0];
 	  localVideo.src = window.URL.createObjectURL(stream);
@@ -94,7 +210,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	$scope.endCall = function(){
 		localStream.stop();
 		$('#localVideo').attr('src', "");
-	}	
+	}	*/
 /*
 	var VideoChat = {
 

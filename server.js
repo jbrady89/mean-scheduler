@@ -16,7 +16,7 @@ var port = process.env.PORT || 1337;
 
 // connect to our mongoDB database 
 // (uncomment after you enter in your own credentials in config/db.js)
-mongoose.connect(process.env.MONGOLAB_URI);
+mongoose.connect(process.env.MONGOLAB_URI || db.url);
 
 // get all data/stuff of the body (POST) parameters
 // parse application/json 
@@ -71,6 +71,10 @@ io.on('connection', function(socket){
       socket.emit('full', room);
     }
 
+  });
+
+  socket.on("message", function(message){
+  	socket.broadcast.emit("message", message);
   });
 
   // use this for exchanging ids
