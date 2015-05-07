@@ -86,7 +86,9 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	    	}
 
 		    var signal = JSON.parse(message);
-		    //console.log("signal: ", signal);
+		    console.log("signal: ", signal);
+		    console.log("message");
+		    console.log(typeof signal["candidate"]);
 		    if(signal.sdp) {
 		    	console.log(myId + " received the " + signal["type"])
 
@@ -97,7 +99,9 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
     				}, function(err){
     					console.log("there was an error setting the description");
     				});
-		    	} else {
+		    	} 
+
+		    	if (signal["type"] == "offer") {
 		    		
 		    	//console.log("signal is SDP");
 		    	//console.log(signal.sdp)
@@ -114,12 +118,12 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			            	console.log(err);
 			     		});
 			        });
-			    };
-		    } else if(signal.ice) {
+			    }
+			} else if (signal.candidate) {
 		    	console.log("signal is ICE");
 		    	iceCandidate = signal;
 		        peerConnection.addIceCandidate( new RTCIceCandidate( signal ) );
-		    }
+			} 
 		});
 
 		var constraints = {
@@ -134,6 +138,11 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	    }
 
 	};
+
+	socket.on("ready", function(){
+		console.log("ready to start a call!");
+		pageReady();
+	});
 
 	/*$scope.call = function(){
 		console.log("we are initiating a call with user: ", theirId);
@@ -179,11 +188,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	/*function trace(text) {
 	  //console.log((performance.now() / 1000).toFixed(3) + ": " + text);
 	}*/
-
-	socket.on("ready", function(){
-		alert("ready to start a call!");
-		pageReady();
-	});
 
 	/*function gotStream(stream){
 	  trace("Received local stream");
