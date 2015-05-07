@@ -7,19 +7,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
     socket.connect('http://127.0.0.1:1337');
     var localStream, peerConnection;
 	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
-	var peerKey = "sjln47ungrd7k3xr";
-
-
-	var peer = new Peer({"key": peerKey});
-	var myId,
-		theirId;
-
-	peer.on("open", function(id){
-		console.log("my peer id is: ", id);
-		socket.emit("newPeer", id);
-		socket.emit("join", "test room");
-		myId = id;
-	});
 
 	var localVideo;
 	var remoteVideo;
@@ -43,7 +30,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	    peerConnection.addStream(localStream);
 
 	    if(isCaller) {
-	    	console.log(myId + "is creating offer");
+	    	
 	        peerConnection.createOffer(gotDescription, createOfferError);
 	    }
 
@@ -81,21 +68,17 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	    socket.on("message", function(message){
 	    	if(!peerConnection) {
-	    		console.log(myId + "is creating a new connection");
 	    		$scope.start(false);
 	    	}
 
 		    var signal = JSON.parse(message);
-		    console.log("signal: ", signal);
-		    console.log("message");
-		    console.log(typeof signal["candidate"]);
+		   
 		    if(signal.sdp) {
-		    	console.log(myId + " received the " + signal["type"])
 
 		    	if (signal["type"] == "answer"){
 		    		var rtcAnswer = new RTCSessionDescription(signal);
     				peerConnection.setRemoteDescription(rtcAnswer, function(){
-    					console.log(myId + "set description with the answer");
+    					console.log("remote description has been set");
     				}, function(err){
     					console.log("there was an error setting the description");
     				});
@@ -107,7 +90,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		    	//console.log(signal.sdp)
 			    	var rtcOffer = new RTCSessionDescription( signal );
 			        peerConnection.setRemoteDescription( rtcOffer , function() {
-			        	console.log(myId + "is creating an answer");
 			            peerConnection.createAnswer(function(answer){
 			            	console.log("answer has been sent");
 			            	peerConnection.setLocalDescription(answer);
@@ -138,6 +120,9 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	    }
 
 	};
+
+	// tell the other person we're here
+	socket.emit("join", "test room");
 
 	socket.on("ready", function(){
 		console.log("ready to start a call!");
