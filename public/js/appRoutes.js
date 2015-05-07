@@ -3,7 +3,6 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
       
 	      // For any unmatched url, send to /route1
 	      $urlRouterProvider.otherwise("/");
-	      
 	      //console.log($stateProvider);
 	      //console.log($urlRouterProvider);
 	      
@@ -17,18 +16,17 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	        .state('trainers', {
 	            url: "/trainers",
 	            templateUrl: "views/trainers.html",
-	            controller: "TrainersCtrl"
+	            controller: 'TrainersCtrl'
 	        })
 	        
-	        .state('trainers.about', {
+	        /*.state('trainers.about', {
 	           parent: "trainers",
 	           url: "/:id",
 	           templateUrl: "views/trainers.about.html",
 	           controller: "TrainersCtrl"
-	        })
+	        })*/
 
-	        .state('trainers.about.calendar', {
-	        	parent: "trainers",
+	        .state('trainers.calendar', {
 	        	url: "/:id/calendar",
 	        	templateUrl: "views/trainers.calendar.html",
 	           	resolve: {
@@ -41,8 +39,7 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	           	},
 	           	controller: "CalendarsCtrl"
 	        })
-	        .state('trainers.about.chat', {
-	        	parent: "trainers",
+	        .state('trainers.chat', {
 	        	url: "/:id/chat",
 	        	templateUrl: "views/trainers.chat.html",
 	        	controller: "VideoChatCtrl"

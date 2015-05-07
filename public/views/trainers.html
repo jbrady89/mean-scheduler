@@ -2,15 +2,22 @@
 
 
 	
-		<div class="row text-center">
-			<div class="col-xs-3 "><a ui-sref=".about({id:1})" class="btn btn-default ">Trainer 1</a></div>
-		    <div class="col-xs-3 "><a ui-sref=".about({id:2})"class="btn btn-default ">Trainer 2</a></div>
-		    <div class="col-xs-3 "><a ui-sref=".about({id:3})"class="btn btn-default ">Trainer 3</a></div>
-		    <div class="col-xs-3 "><a ui-sref=".about({id:4})"class="btn btn-default ">Trainer 4</a></div>
+		<div class="row" >
+			<div class="col-sm-4 text-center well" ng-repeat="trainer in trainers">
+				<h1>I'm {{trainer.name}}</h1>
+				<p>
+			    	{{trainer.description}}
+				</p>
+				<a ui-sref=".calendar({id: trainer.id })" >
+				    <div class="btn btn-default">Book a session!</div>
+				</a>
+				<a ui-sref=".chat({id: trainer.id })" >
+					<div class="btn btn-default">Chat with me!</div>
+				</a>
+			</div>
 		</div>
-		<div class="row text-center" ui-view>
-			<!-- trainer info goes here -->
-		</div>	
+		<div ui-view></div>
+		
 
 	
 
