@@ -28,7 +28,12 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 
 	        .state('trainers.calendar', {
 	        	url: "/:id/calendar",
-	        	templateUrl: "views/trainers.calendar.html",
+	        	views: {
+	        		'@': {
+	        			'templateUrl' : 'views/trainers.calendar.html',
+	        			'controller' : 'CalendarsCtrl'
+	        		}
+	        	},
 	           	resolve: {
 	           		CalendarService: 'Calendar',
 	           		eventsData : function(CalendarService, $stateParams){
@@ -36,14 +41,19 @@ angular.module('appRoutes', ["ui.router"]).config(function($stateProvider, $urlR
 	           			var id = $stateParams.id;
 	           			return CalendarService.get(id);
 	           		}
-	           	},
-	           	controller: "CalendarsCtrl"
+	           	}
+	           	
 	        })
 	        .state('trainers.chat', {
 	        	url: "/:id/chat",
-	        	templateUrl: "views/trainers.chat.html",
-	        	controller: "VideoChatCtrl"
-	        })
+	        	views: {
+	        		'@': {
+	        			'templateUrl': 'views/trainers.chat.html',
+	        			'controller' : 'VideoChatCtrl'
+	        		}
+	        	}
+	        	
+	        });
 
 
 	});

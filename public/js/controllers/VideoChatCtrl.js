@@ -2,7 +2,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	//document.write("The Chat Controller");
 	console.log("we made it to the chat view");
-	var roomId = $stateParams.id;
+	var trainerId = $stateParams.id;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
     var localStream, peerConnection;
@@ -121,8 +121,12 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	};
 
+	$scope.$on('destroy', function(){
+		socket.disconnect();
+	});
+
 	// tell the other person we're here
-	socket.emit("join", "test room");
+	socket.emit("join", "Trainer " + trainerId + "'s room");
 
 	socket.on("ready", function(){
 		console.log("ready to start a call!");
