@@ -77,31 +77,10 @@ io.on('connection', function(socket){
   	socket.broadcast.emit("message", message);
   });
 
-  // use this for exchanging ids
-  socket.on("newPeer", function(data){
-  	console.log("new peer:", data);
-  	socket.broadcast.emit("newPeer", data);
+  socket.on("endCall", function(data){
+    console.log("81: " + data);
+    socket.broadcast.emit("endCall", data);
   });
-
-  socket.on("call", function(id){
-  	socket.broadcast.emit("call", id);
-  });
-
-  // broadcast to the other browser when a candidate becomes available
-  socket.on('candidate', function(candidate){
-  	console.log("we have an ICE candidate, sending it back to the client");
-  	socket.broadcast.emit('candidate', candidate);
-  });
-
-  socket.on('offer', function(offer){
-  	console.log("we got an offer: " , offer);
-  	socket.broadcast.emit('offer', offer);
-  });
-
-  /*socket.on('answer', function(answer){
-  	console.log("we got an answer answer: ", answer);
-  	socket.broadcast.emit("answer", answer);
-  });*/
 
   socket.on('disconnect', function(socket){
   	console.log("user disconnected");

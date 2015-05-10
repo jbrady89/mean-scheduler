@@ -51,6 +51,8 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	function gotRemoteStream(event) {
 	    console.log("got remote stream");
+	    console.log(event);
+	    remoteStream = event.stream;
 	    remoteVideo.src = window.URL.createObjectURL(event.stream);
 	}
 
@@ -121,8 +123,54 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	};
 
+	$scope.hangUp = function hangUp() {
+
+		
+			
+		// if the local stream is running,
+		// stop the local and remote streams
+		if (localStream.ended == false){
+			console.log('hanging up now');
+			localStream.stop();
+			console.log(localStream.ended);
+			console.log("the stream was stopped");
+			//if (localStream.ended)
+			//socket.emit("endCall", socket);
+			socket.emit("endCall", "user hung up");
+
+			
+			
+		} else {
+			console.log("stream has ended");
+			$('#remoteVideo').prop("src", "");
+		}
+	}
+
+
+
 	$scope.$on('destroy', function(){
-		socket.disconnect();
+		console.log("navigated away");
+		/*var hangUp = new Promise(function(resolve, reject){
+			// end the call
+			$scope.hangUp();
+		})
+		// then disconnect
+		hangUp.then(function(){
+			console.log("promise was resolved");
+			socket.disconnect();
+		})
+		.catch(function(err){
+			console.log(err);
+		});*/
+	});
+
+	socket.on('endCall', function(data){
+		//console.log(message);
+		console.log("166: the other user hung up");
+		$scope.hangUp();
+		//$('#remoteStream').fadeOut(500);
+		socket.emit("endCall", "stream has ended");
+		
 	});
 
 	// tell the other person we're here
