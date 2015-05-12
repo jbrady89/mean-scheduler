@@ -3,6 +3,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	//document.write("The Chat Controller");
 	console.log("we made it to the chat view");
 	var trainerId = $stateParams.id;
+	$scope.trainerId = trainerId;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
     $scope.streaming = false;
