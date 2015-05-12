@@ -19,7 +19,7 @@
 	</div>
 	<br>
 	<div class="btn btn-default" ng-click="pageReady()" id="startButton">Start cam</div>
-	<div class="btn btn-default" id="callButton" ng-click="start(true)">Call</div>
+	<div class="btn btn-default" id="callButton" ng-disabled="!roomFull" ng-click="start(true)">Call</div>
 	<div class="btn btn-default" id="hangUpButton" ng-click="hangUp()">End Call</div>
 
 	<div class="row">

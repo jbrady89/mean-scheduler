@@ -53,43 +53,57 @@ io.on('connection', function(socket){
   //console.log("users connected: ", connectionCount);
 
   socket.on('join', function(room){
-  	//console.log(room);
+  	console.log("56: ", room);
     var clients = io.sockets.adapter.rooms[room];
     var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
 
     if(numClients == 0){
 
       socket.join(room);
+      console.log(io.sockets.adapter.rooms[room]);
 
     }else if(numClients == 1){
 
       socket.join(room);
-      socket.emit('ready', room);
-      socket.broadcast.emit('ready', room);
+      io.sockets.adapter.rooms[room];
+      //socket.emit('ready', room);
+      io.sockets.in(room).emit('ready', room);
 
     }else{
-      socket.emit('full', room);
+      io.sockets.in(room).emit('full', room);
     }
 
   });
 
-  socket.on("message", function(message){
-  	socket.broadcast.emit("message", message);
+  socket.on('leave', function(room){
+    var clients = io.sockets.adapter.rooms[room];
+    var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+    if (numClients !== 0){
+      socket.leave(room);
+      io.sockets.in(room).emit("leave", room);
+    }
+  });
+
+  socket.on("message", function(data){
+    var room = data.room;
+  	io.sockets.in(room).emit("message", data.message);
   });
 
   socket.on("endCall", function(data){
     console.log("81: " + data);
-    socket.broadcast.emit("endCall", data);
+    var room = data.room;
+    io.sockets.in(room).emit("endCall", data);
   });
 
   socket.on("userIsStreaming", function(){
     socket.emit("userIsStreaming", "I'm streaming");
   });
 
-  socket.on('disconnect', function(socket){
+  socket.on('disconnect', function(data){
   	console.log("user disconnected");
+    //console.log(socket);
   	connectionCount -= 1;
-  	//console.log("we now have " + connectionCount + " connections");
+    //var room = data.room;
   });
 });          
 

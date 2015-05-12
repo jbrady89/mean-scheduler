@@ -7,6 +7,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
     $scope.streaming = false;
+    $scope.roomFull = false;
     var localStream;
 	var localVideo;
 	var remoteVideo;
@@ -23,19 +24,10 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	}
 
 	$scope.isActive = function(viewLocation){
-		console.log(viewLocation);
-		console.log($state.current.url);
-		console.log($location.path());
+		
 		
 		return viewLocation === $location.path();
 	};
-
-	$scope.$watch("isActive", function(result){
-		console.log(this);
-		console.log(result);
-		console.log($scope.isActive());
-
-	})
 
 	function getUserMediaError(error) {
 	    console.log(error);
@@ -58,13 +50,13 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	function gotDescription(description) {
 	    console.log('got description');
 	    peerConnection.setLocalDescription(description, function () {
-	        socket.emit('message', JSON.stringify(description) );
+	        socket.emit('message', {room: trainerId, message: JSON.stringify(description) });
 	    }, function() {console.log('set description error')});
 	}
 
 	function gotIceCandidate(event) {
 	    if(event.candidate != null) {
-	        socket.emit('message', JSON.stringify(event.candidate));
+	        socket.emit('message', {room: trainerId, message: JSON.stringify(event.candidate)});
 	    }
 	}
 
@@ -91,7 +83,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		    
 
 		    socket.on("message", function(message){
-		    	
+		    	console.log(message);
 		    	if(!peerConnection || peerConnection.signalingState == "closed") {
 		    		$scope.start(false);
 		    	}
@@ -118,7 +110,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 				            peerConnection.createAnswer(function(answer){
 				            	console.log("answer has been sent");
 				            	peerConnection.setLocalDescription(answer);
-				            	socket.emit("message", JSON.stringify(answer) );
+				            	socket.emit("message", {room: trainerId, message: JSON.stringify(answer) } );
 
 				            }, 
 				            function (err){
@@ -183,7 +175,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 				$scope.streaming = false;			
 				//console.log(localStream.ended);
 				console.log("the stream was stopped");
-				socket.emit("endCall", "user hung up");
+				socket.emit("endCall", {room: trainerId});
 			});
 			
 			
@@ -199,18 +191,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	$scope.$on('destroy', function(){
 		console.log("navigated away");
-		/*var hangUp = new Promise(function(resolve, reject){
-			// end the call
-			$scope.hangUp();
-		})
-		// then disconnect
-		hangUp.then(function(){
-			console.log("promise was resolved");
-			socket.disconnect();
-		})
-		.catch(function(err){
-			console.log(err);
-		});*/
 	});
 
 	socket.on('endCall', function(data){
@@ -224,11 +204,33 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	});
 
 	// tell the other person we're here
-	socket.emit("join", "Trainer " + trainerId + "'s room");
+	socket.emit("join", trainerId);
 
 	socket.on("ready", function(){
 		console.log("ready to start a call!");
+		$scope.$apply(function(){
+			$scope.roomFull = true;
+
+		});
 		//pageReady();
+	});
+
+	$scope.$on("$stateChangeStart", function(){
+		alert("leaving room");
+		var room = trainerId;
+		socket.emit("leave", room);
+		$scope.hangUp();
+	});
+
+
+
+	socket.on("leave", function(room){
+		console.log(room);
+
+		$scope.$apply(function(){
+			$scope.roomFull = false;
+
+		});
 	});
 
 });
