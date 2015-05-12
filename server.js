@@ -82,6 +82,10 @@ io.on('connection', function(socket){
     socket.broadcast.emit("endCall", data);
   });
 
+  socket.on("userIsStreaming", function(){
+    socket.emit("userIsStreaming", "I'm streaming");
+  });
+
   socket.on('disconnect', function(socket){
   	console.log("user disconnected");
   	connectionCount -= 1;

@@ -1,13 +1,12 @@
-angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope, $stateParams){
+angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope, $q, $stateParams){
 
 	//document.write("The Chat Controller");
 	console.log("we made it to the chat view");
 	var trainerId = $stateParams.id;
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
-    var localStream, peerConnection;
-	var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
-
+    $scope.streaming = false;
+    var localStream;
 	var localVideo;
 	var remoteVideo;
 	var peerConnection;
@@ -16,6 +15,10 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	function getUserMediaSuccess(stream) {
 	    localStream = stream;
 	    localVideo.src = window.URL.createObjectURL(stream);
+	    $scope.$apply(function(){
+	        $scope.streaming = true;
+
+	    });
 	}
 
 	function getUserMediaError(error) {
@@ -51,7 +54,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	function gotRemoteStream(event) {
 	    console.log("got remote stream");
-	    console.log(event);
+	    //console.log(event);
 	    remoteStream = event.stream;
 	    remoteVideo.src = window.URL.createObjectURL(event.stream);
 	}
@@ -64,64 +67,89 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		console.log(error);
 	}
 
-	function pageReady() {
-	    localVideo = document.getElementById('localVideo');
-	    remoteVideo = document.getElementById('remoteVideo');
+	var localVideo = document.getElementById('localVideo');
+	var remoteVideo = document.getElementById('remoteVideo');
+	$scope.pageReady = function pageReady() {
+		//console.log(localStream);
+		if (localStream == undefined || localStream.active == false){
+		    
 
-	    socket.on("message", function(message){
-	    	if(!peerConnection) {
-	    		$scope.start(false);
-	    	}
+		    socket.on("message", function(message){
+		    	
+		    	if(!peerConnection || peerConnection.signalingState == "closed") {
+		    		$scope.start(false);
+		    	}
 
-		    var signal = JSON.parse(message);
-		   
-		    if(signal.sdp) {
+			    var signal = JSON.parse(message);
+			   
+			    if(signal.sdp) {
 
-		    	if (signal["type"] == "answer"){
-		    		var rtcAnswer = new RTCSessionDescription(signal);
-    				peerConnection.setRemoteDescription(rtcAnswer, function(){
-    					console.log("remote description has been set");
-    				}, function(err){
-    					console.log("there was an error setting the description");
-    				});
-		    	} 
+			    	if (signal["type"] == "answer"){
+			    		var rtcAnswer = new RTCSessionDescription(signal);
+	    				peerConnection.setRemoteDescription(rtcAnswer, function(){
+	    					console.log("remote description has been set");
+	    				}, function(err){
+	    					console.log("there was an error setting the description");
+	    				});
+			    	} 
 
-		    	if (signal["type"] == "offer") {
-		    		
-		    	//console.log("signal is SDP");
-		    	//console.log(signal.sdp)
-			    	var rtcOffer = new RTCSessionDescription( signal );
-			        peerConnection.setRemoteDescription( rtcOffer , function() {
-			            peerConnection.createAnswer(function(answer){
-			            	console.log("answer has been sent");
-			            	peerConnection.setLocalDescription(answer);
-			            	socket.emit("message", JSON.stringify(answer) );
+			    	if (signal["type"] == "offer") {
+			    		
+			    	//console.log("signal is SDP");
+			    	//console.log(signal.sdp)
+				    	var rtcOffer = new RTCSessionDescription( signal );
+				        peerConnection.setRemoteDescription( rtcOffer , function() {
+				            peerConnection.createAnswer(function(answer){
+				            	console.log("answer has been sent");
+				            	peerConnection.setLocalDescription(answer);
+				            	socket.emit("message", JSON.stringify(answer) );
 
-			            }, 
-			            function (err){
-			            	console.log(err);
-			     		});
-			        });
-			    }
-			} else if (signal.candidate) {
-		    	console.log("signal is ICE");
-		    	iceCandidate = signal;
-		        peerConnection.addIceCandidate( new RTCIceCandidate( signal ) );
-			} 
-		});
+				            }, 
+				            function (err){
+				            	console.log(err);
+				     		});
+				        });
+				    }
+				} else if (signal.candidate) {
+					//console.log(peerConnection);
+			    	console.log("signal is ICE");
+			    	iceCandidate = signal;
+			        peerConnection.addIceCandidate( new RTCIceCandidate( signal ) );
+				} 
+			});
 
-		var constraints = {
-	        video: true,
-	        audio: true,
-	    };
+			var constraints = {
+		        video: true,
+		        audio: true,
+		    };
 
-	    if(getUserMedia) {
-	        getUserMedia(constraints, getUserMediaSuccess, getUserMediaError);
-	    } else {
-	        alert('Your browser does not support getUserMedia API');
-	    }
+		    if(getUserMedia) {
 
-	};
+		        var startStreaming = new Promise(function(resolve, reject){
+		        	resolve(getUserMedia(constraints, getUserMediaSuccess, getUserMediaError));
+		        });
+
+		        startStreaming.then(function(){
+		        	console.log("we're streaming");
+
+		        		$scope.streaming = true;
+
+		        })
+		        .catch(function(err){
+		        	console.log(err);
+		        });
+
+		    } else {
+		        alert('Your browser does not support getUserMedia API');
+		    }
+		}
+	}
+
+	var stopStreaming = function(){
+		var defer = $q.defer();
+		defer.resolve(localStream.stop());
+		return defer.promise;
+	}
 
 	$scope.hangUp = function hangUp() {
 
@@ -129,19 +157,24 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			
 		// if the local stream is running,
 		// stop the local and remote streams
-		if (localStream.ended == false){
-			console.log('hanging up now');
-			localStream.stop();
-			console.log(localStream.ended);
-			console.log("the stream was stopped");
-			//if (localStream.ended)
-			//socket.emit("endCall", socket);
-			socket.emit("endCall", "user hung up");
+		if (localStream.active == true){
 
+			console.log('hanging up now');
+
+			stopStreaming()
+			.then(function(){
+				peerConnection.close();
+				$scope.streaming = false;			
+				//console.log(localStream.ended);
+				console.log("the stream was stopped");
+				socket.emit("endCall", "user hung up");
+			});
 			
 			
 		} else {
 			console.log("stream has ended");
+			$scope.streaming = false;
+
 			$('#remoteVideo').prop("src", "");
 		}
 	}
@@ -169,7 +202,8 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		console.log("166: the other user hung up");
 		$scope.hangUp();
 		//$('#remoteStream').fadeOut(500);
-		socket.emit("endCall", "stream has ended");
+		$('#remoteVideo').prop("src", "");
+		//socket.emit("endCall", "stream has ended");
 		
 	});
 
@@ -178,7 +212,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	socket.on("ready", function(){
 		console.log("ready to start a call!");
-		pageReady();
+		//pageReady();
 	});
 
 });
