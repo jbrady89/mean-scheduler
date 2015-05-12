@@ -1,7 +1,15 @@
-<h1>The Chat View</h1>
+<h3>Select a room to join</h3>
+<div class="row">
+	<a ui-sref="trainers.chat({id: 1})" class="col-xs-3">Trainer 1's room</a>
+	<a ui-sref="trainers.chat({id: 2})" class="col-xs-3">Trainer 2's room</a>
+	<a ui-sref="trainers.chat({id: 3})" class="col-xs-3">Trainer 3's room</a>
+</div>
+
+<hr>
+
 <div class="well">
 
-	<div class="btn btn-default" ng-click="pageReady()" id="startButton">Start a new Chat</div>
+	<div class="btn btn-default" ng-click="pageReady()" id="startButton">Start cam</div>
 	<div class="btn btn-default" id="callButton" ng-click="start(true)">Call</div>
 	<div class="btn btn-default" id="hangUpButton" ng-click="hangUp()">End Call</div>
 
@@ -13,7 +21,7 @@
 
 		</div>
 
-		<div class="remoteVideoContainer col-xs-4" ng-show="streaming">
+		<div class="remoteVideoContainer col-xs-8" ng-show="streaming">
 
 			<video style="display: block; width: 100%" id="remoteVideo" autoplay/>
 
