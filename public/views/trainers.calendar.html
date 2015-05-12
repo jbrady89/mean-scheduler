@@ -1,14 +1,11 @@
-<h1 class="text-center">Welcome to trainer {{trainerId}}'s calendar!</h1>
+<h3 class="text-center">trainer {{trainerId}}'s calendar!</h1>
 <div class="container">
   <section id="directives-calendar" >
     <div >
         <div class="row">
-            <div class="col-xs-3">
+            <div class="col-lg-3">
                 
-                <div class="btn-group calTools">             
-                  <button class="btn" ng-click="addRemoveEventSource(eventSources,eventSource)">
-                    Toggle Source
-                  </button>
+                <div class="btn-group calTools row">             
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >
                     Add Event
                   </button>
@@ -71,7 +68,7 @@
 
             </div>
 
-            <div class="col-xs-8">
+            <div class="col-lg-8">
 
                 <i class="glyphicon glyphicon-bell"></i> Calendar {{trainerId}}
                 <div class="alert-success calAlert" ng-show="alertMessage != undefined && alertMessage != ''">
