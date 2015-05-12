@@ -1,9 +1,15 @@
 <h3>Select a room to join</h3>
-<div class="row">
-	<a ui-sref="trainers.chat({id: 1})" class="col-xs-3">Trainer 1's room</a>
-	<a ui-sref="trainers.chat({id: 2})" class="col-xs-3">Trainer 2's room</a>
-	<a ui-sref="trainers.chat({id: 3})" class="col-xs-3">Trainer 3's room</a>
-</div>
+<ul class="nav nav-tabs">
+  	<li role="presentation" ng-class="{active: isActive('/trainers/1/chat')}">
+  		<a ui-sref="trainers.chat({id: 1})" ui-sref-active="active" >Trainer 1's room</a>
+	<li>
+	<li role="presentation" ng-class="{active: isActive('/trainers/2/chat')}">
+		<a ui-sref="trainers.chat({id: 2})" ui-sref-active="active" >Trainer 2's room</a>
+	</li>
+	<li role="presentation" ng-class="{active: isActive('/trainers/3/chat')}">
+		<a ui-sref="trainers.chat({id: 3})" ui-sref-active="active" >Trainer 3's room</a>
+	</li>
+</ul>
 
 <hr>
 

@@ -1,4 +1,4 @@
-angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($scope, $q, $stateParams){
+angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", function($location, $scope, $q, $stateParams, $state){
 
 	//document.write("The Chat Controller");
 	console.log("we made it to the chat view");
@@ -21,6 +21,21 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 	    });
 	}
+
+	$scope.isActive = function(viewLocation){
+		console.log(viewLocation);
+		console.log($state.current.url);
+		console.log($location.path());
+		
+		return viewLocation === $location.path();
+	};
+
+	$scope.$watch("isActive", function(result){
+		console.log(this);
+		console.log(result);
+		console.log($scope.isActive());
+
+	})
 
 	function getUserMediaError(error) {
 	    console.log(error);

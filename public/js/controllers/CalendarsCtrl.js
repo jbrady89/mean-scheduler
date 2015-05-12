@@ -7,7 +7,7 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap'])
     return date;
   };
 })
-.controller('CalendarsCtrl', function( $scope, $compile, uiCalendarConfig, $stateParams, Calendar, eventsData) {
+.controller('CalendarsCtrl', function( $scope, $location, $compile, uiCalendarConfig, $stateParams, Calendar, eventsData) {
 
     /**
  * calendarDemoApp - 0.9.0
@@ -62,6 +62,11 @@ angular.module('CalendarsCtrl', ['ui.calendar', 'ui.bootstrap'])
 
       return event;
     });*/
+
+    $scope.isActive = function(viewLocation){
+      
+      return viewLocation === $location.path();
+    };
 
     $scope.events = eventsData.data;
 

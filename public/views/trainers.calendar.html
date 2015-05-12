@@ -1,9 +1,9 @@
 
 <div class="container">
-  <div class="row text-center">
-    <a ui-sref="trainers.calendar({id: 1})" class="col-xs-3">Trainer 1's calendar</a>
-    <a ui-sref="trainers.calendar({id: 2})" class="col-xs-3">Trainer 2's calendar</a>
-    <a ui-sref="trainers.calendar({id: 3})" class="col-xs-3">Trainer 3's calendar</a>
+  <div class="nav nav-tabs">
+    <li ng-class="{active: isActive('/trainers/1/calendar')}"><a ui-sref="trainers.calendar({id: 1})"  >Trainer 1's calendar</a></li>
+    <li ng-class="{active: isActive('/trainers/2/calendar')}"> <a ui-sref="trainers.calendar({id: 2})" >Trainer 2's calendar</a></li>
+    <li ng-class="{active: isActive('/trainers/3/calendar')}"><a ui-sref="trainers.calendar({id: 3})"  >Trainer 3's calendar</a></li>
   </div>
   <br>
   <div class="btn-group calTools row col-md-offset-3">             
