@@ -216,7 +216,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	});
 
 	$scope.$on("$stateChangeStart", function(){
-		alert("leaving room");
+		//alert("leaving room");
 		var room = trainerId;
 		socket.emit("leave", room);
 		$scope.hangUp();
