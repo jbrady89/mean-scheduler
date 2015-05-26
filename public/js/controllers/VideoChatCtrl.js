@@ -6,11 +6,46 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	var socket = io.connect();
     socket.connect('http://127.0.0.1:1337');
 
+    // tell the other person we're here
+	socket.emit("join", trainerId);
+
+    socket.on('endCall', function(data){
+		//console.log(message);
+		//console.log("166: the other user hung up");
+		$scope.VideoChat.stop();
+		//$('#remoteStream').fadeOut(500);
+		$('#remoteVideo').prop("src", "");
+		//socket.emit("endCall", "stream has ended");
+		
+	});
+
+	socket.on("ready", function(){
+		//console.log("ready to start a call!");
+		$scope.$apply(function(){
+			$scope.roomFull = true;
+
+		});
+		//pageReady();
+	});
+
+	socket.on("leave", function(room){
+		//console.log(room);
+
+		$scope.$apply(function(){
+			$scope.roomFull = false;
+
+		});
+	});
+
+	$scope.$on("$stateChangeStart", function(){
+		//alert("leaving room");
+		var room = trainerId;
+		socket.emit("leave", room);
+		$scope.VideoChat.stop();
+	});
 
     // setting the active tab
 	$scope.isActive = function(viewLocation){
-		
-		
 		return viewLocation === $location.path();
 	};
 
@@ -25,6 +60,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			localVideo = document.getElementById('localVideo'),
 			remoteVideo = document.getElementById('remoteVideo');
 
+	    // private methods
 		var getUserMediaSuccess = function getUserMediaSuccess(stream) {
 		    localStream = stream;
 		    localVideo.src = window.URL.createObjectURL(stream);
@@ -38,7 +74,6 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		    console.log(error);
 		};
 
-		// private methods
 		var gotDescription = function gotDescription(description) {
 		    //console.log('got description');
 		    peerConnection.setLocalDescription(
@@ -78,6 +113,9 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			return defer.promise;
 		};
 
+		// end private methods
+
+		// public methods
 		var start = function start(isCaller) {
 
 		    peerConnection = new RTCPeerConnection(peerConnectionConfig);
@@ -111,7 +149,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 		    				peerConnection.setRemoteDescription(rtcAnswer, function(){
 		    					console.log("remote description has been set");
 		    				}, function(err){
-		    					console.log("there was an error setting the description");
+		    					console.log(err);
 		    				});
 				    	} 
 
@@ -153,8 +191,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 
 			        startStreaming.then(function(){
 			        	//console.log("we're streaming");
-
-			        		$scope.streaming = true;
+			        	$scope.streaming = true;
 
 			        })
 			        .catch(function(err){
@@ -193,52 +230,11 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 			}
 		};
 
+		// expose the methods to the client
 		return {
 			start : start,
 			init : pageReady,
 			stop : hangUp
-
 		};
 	}());
-
-	socket.on('endCall', function(data){
-		//console.log(message);
-		//console.log("166: the other user hung up");
-		$scope.VideoChat.stop();
-		//$('#remoteStream').fadeOut(500);
-		$('#remoteVideo').prop("src", "");
-		//socket.emit("endCall", "stream has ended");
-		
-	});
-
-	// tell the other person we're here
-	socket.emit("join", trainerId);
-
-	socket.on("ready", function(){
-		//console.log("ready to start a call!");
-		$scope.$apply(function(){
-			$scope.roomFull = true;
-
-		});
-		//pageReady();
-	});
-
-	$scope.$on("$stateChangeStart", function(){
-		//alert("leaving room");
-		var room = trainerId;
-		socket.emit("leave", room);
-		$scope.VideoChat.stop();
-	});
-
-
-
-	socket.on("leave", function(room){
-		//console.log(room);
-
-		$scope.$apply(function(){
-			$scope.roomFull = false;
-
-		});
-	});
-
 });
