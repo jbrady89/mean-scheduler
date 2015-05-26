@@ -50,7 +50,7 @@ angular.module("VideoChatCtrl", ["ui.bootstrap"]).controller("VideoChatCtrl", fu
 	};
 
 	// exposes three methods: init, start, stop
-	$scope.VideoChat = (function (){
+	$scope.VideoChat = (function(){
 
 		$scope.streaming = false;
 	    $scope.roomFull = false;
