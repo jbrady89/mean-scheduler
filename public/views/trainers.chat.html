@@ -18,9 +18,9 @@
 		<span>Welcome to room {{trainerId}}</span>
 	</div>
 	<br>
-	<div class="btn btn-default" ng-click="pageReady()" id="startButton">Start cam</div>
-	<div class="btn btn-default" id="callButton" ng-disabled="!roomFull" ng-click="start(true)">Call</div>
-	<div class="btn btn-default" id="hangUpButton" ng-click="hangUp()">End Call</div>
+	<div class="btn btn-default" ng-click="VideoChat.init()" id="startButton">Start cam</div>
+	<div class="btn btn-default" id="callButton" ng-disabled="!roomFull" ng-click="VideoChat.start(true)">Call</div>
+	<div class="btn btn-default" id="hangUpButton" ng-click="VideoChat.stop()">End Call</div>
 
 	<div class="row">
 
